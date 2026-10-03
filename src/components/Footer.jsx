@@ -25,9 +25,6 @@ function Footer() {
           <Link to="/categories">Categories</Link>
           <Link to="/quotation">Quotation Cart</Link>
           <Link to="/request-quotation">Request Quotation</Link>
-          <Link to="/admin/login" style={{ color: "#779683", marginTop: "12px", display: "inline-block" }}>
-            Admin Demo →
-          </Link>
         </div>
 
         <div>

@@ -14,10 +14,9 @@ export default function AdminLogin() {
 
     setError("");
 
-    // DEMO credentials only
     if (
-      email.trim() === "admin@demo.local" &&
-      password === "demo123"
+      (email.trim().toLowerCase() === "admin" || email.trim() === "admin@kailashsagarenterprise.com") &&
+      password === "admin@123456789"
     ) {
       saveAdminSession({
         email,
@@ -28,7 +27,7 @@ export default function AdminLogin() {
       return;
     }
 
-    setError("Invalid demo credentials.");
+    setError("Invalid admin credentials.");
   };
 
   return (
@@ -37,10 +36,10 @@ export default function AdminLogin() {
       <div className="admin-login-card">
 
         <div className="admin-login-logo">
-          KSE
+          KS
         </div>
 
-        <h1>Admin Login</h1>
+        <h1>Admin Portal</h1>
 
         <p className="admin-login-subtitle">
           Kailash Sagar Enterprise
@@ -49,15 +48,16 @@ export default function AdminLogin() {
         <form onSubmit={handleSubmit}>
 
           <label>
-            Email
+            Username
           </label>
 
           <input
-            type="email"
-            placeholder="admin@demo.local"
+            type="text"
+            placeholder="Enter admin username"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            autoComplete="off"
           />
 
           <label>
@@ -82,20 +82,10 @@ export default function AdminLogin() {
             type="submit"
             className="admin-login-button"
           >
-            Login
+            Login to Admin Dashboard
           </button>
 
         </form>
-
-        <div className="demo-credentials">
-          <strong>Demo Credentials</strong>
-          <span>admin@demo.local</span>
-          <span>demo123</span>
-        </div>
-
-        <div className="admin-login-note">
-          Demo only — no real authentication is connected.
-        </div>
 
       </div>
 

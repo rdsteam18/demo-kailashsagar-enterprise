@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kailash Sagar Enterprise — Administration Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            DEFAULT: '#0F2C59',
+                            dark: '#0A1D37',
+                            light: '#1E3A8A'
+                        },
+                        b2bAccent: {
+                            DEFAULT: '#C2410C',
+                            hover: '#9A3412'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .watermark-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.035;
+            background-image: repeating-linear-gradient(
+                -45deg,
+                #000,
+                #000 120px,
+                transparent 120px,
+                transparent 240px
+            );
+            background-size: 340px 340px;
+        }
+        .watermark-text {
+            position: fixed;
+            bottom: 12px;
+            right: 16px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            color: rgba(0, 0, 0, 0.4);
+            pointer-events: none;
+            z-index: 9998;
+            text-transform: uppercase;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="h-full bg-slate-50 text-slate-800 font-sans antialiased flex flex-col justify-between selection:bg-navy selection:text-white">
+
+    <!-- Subtle Demo Watermark -->
+    <div class="watermark-overlay"></div>
+    <div class="watermark-text">DJP TECH • DEMO • NOT FOR PRODUCTION</div>
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <!-- Dynamic App Container -->
+    <div id="admin-app" class="flex-grow flex flex-col min-h-screen">
+        <!-- Rendered dynamically by script below -->
+    </div>
+
+    <script>
+        /* ==========================================================
+           ADMIN DATA STORE & SYNCHRONIZATION
+           ========================================================== */
+
+        const DEFAULT_CATEGORIES = [
+            { id: 'cat-1', name: 'Safety Products', count: 18, image: 'https://placehold.co/400x300/0F2C59/FFFFFF?text=Safety+Gear', desc: 'Certified industrial helmets, safety harnesses, high-visibility vests & footwear.' },
+            { id: 'cat-2', name: 'Garments & Textiles', count: 24, image: 'https://placehold.co/400x300/1E3A8A/FFFFFF?text=Garments', desc: 'Bulk corporate cotton t-shirts, boiler suits, industrial overalls & uniforms.' },
+            { id: 'cat-3', name: 'Industrial Supplies', count: 15, image: 'https://placehold.co/400x300/334155/FFFFFF?text=Industrial', desc: 'Heavy duty rubber mats, industrial lubricants, tapes & safety tapes.' },
+            { id: 'cat-4', name: 'Packaging Materials', count: 20, image: 'https://placehold.co/400x300/475569/FFFFFF?text=Packaging', desc: 'Heavy corrugated boxes, stretch wrap rolls, PP strapping rolls & bubble films.' },
+            { id: 'cat-5', name: 'Hardware & Tools', count: 12, image: 'https://placehold.co/400x300/1E293B/FFFFFF?text=Hardware', desc: 'Professional hand tools, industrial fasteners, heavy wrenches & drill bits.' }
+        ];
+
+        const DEFAULT_PRODUCTS = [
+            {
+                id: 'PROD-101',
+                name: 'Industrial Heavy Duty Safety Helmet',
+                category: 'Safety Products',
+                subcategory: 'Head Protection',
+                moq: 25,
+                shortDesc: 'ABS material construction, 6-point ratchet suspension, IS:2925 certified for high impact resistance.',
+                description: 'Designed for heavy manufacturing, construction, and mining sites. High-density polyethylene shell offers superior shock absorption and resistance to penetration. Features universal slot attachments for earmuffs and face shields.',
+                material: 'ABS Plastic / HDPE',
+                image: 'https://placehold.co/600x450/0F2C59/FFFFFF?text=Safety+Helmet',
+                variants: [
+                    { size: 'Standard', color: 'Yellow', material: 'ABS' },
+                    { size: 'Standard', color: 'White', material: 'ABS' },
+                    { size: 'Standard', color: 'Blue', material: 'ABS' },
+                    { size: 'Standard', color: 'Red', material: 'ABS' }
+                ],
+                featured: true
+            },
+            {
+                id: 'PROD-102',
+                name: 'High-Visibility Reflex Safety Vest',
+                category: 'Safety Products',
+                subcategory: 'High-Vis Apparels',
+                moq: 50,
+                shortDesc: '100% polyester mesh fabric with 2-inch silver retro-reflective tape. Velcro front closure.',
+                description: 'Essential for roadside workers, warehouse logistics, and night construction. Provides 360-degree reflectivity in low-light environments. Breathable lightweight knit fabric.',
+                material: 'Polyester Mesh',
+                image: 'https://placehold.co/600x450/1E3A8A/FFFFFF?text=Safety+Vest',
+                variants: [
+                    { size: 'M', color: 'Neon Yellow', material: 'Polyester' },
+                    { size: 'L', color: 'Neon Yellow', material: 'Polyester' },
+                    { size: 'XL', color: 'Neon Yellow', material: 'Polyester' },
+                    { size: 'L', color: 'Neon Orange', material: 'Polyester' }
+                ],
+                featured: true
+            },
+            {
+                id: 'PROD-103',
+                name: 'Commercial Heavy Cotton Polo T-Shirt',
+                category: 'Garments & Textiles',
+                subcategory: 'Corporate Uniforms',
+                moq: 50,
+                shortDesc: '220 GSM combed cotton pique fabric, pre-shrunk, ideal for corporate branding and industrial staff.',
+                description: 'Durable corporate uniform polo shirt with double-needle stitching on shoulders and armholes. Resistant to fading and shrinkage during industrial laundering.',
+                material: '100% Combed Cotton',
+                image: 'https://placehold.co/600x450/334155/FFFFFF?text=Cotton+Polo',
+                variants: [
+                    { size: 'M', color: 'Navy Blue', material: 'Cotton' },
+                    { size: 'L', color: 'Navy Blue', material: 'Cotton' },
+                    { size: 'XL', color: 'Navy Blue', material: 'Cotton' },
+                    { size: 'XXL', color: 'Navy Blue', material: 'Cotton' },
+                    { size: 'L', color: 'Steel Grey', material: 'Cotton' }
+                ],
+                featured: true
+            },
+            {
+                id: 'PROD-104',
+                name: 'Industrial Heavy Duty Boiler Suit',
+                category: 'Garments & Textiles',
+                subcategory: 'Protective Workwear',
+                moq: 20,
+                shortDesc: 'Poly-cotton blend (80/20) coverall with two-way heavy brass zipper and multiple tool pockets.',
+                description: 'Engineered for refinery workers, mechanics, and factory floors. Provides full body protection against grease, oil, and minor abrasions. Double stitched stress points.',
+                material: 'Polyester Cotton Twill',
+                image: 'https://placehold.co/600x450/475569/FFFFFF?text=Boiler+Suit',
+                variants: [
+                    { size: '38 (M)', color: 'Navy Blue', material: 'Poly-Cotton' },
+                    { size: '40 (L)', color: 'Navy Blue', material: 'Poly-Cotton' },
+                    { size: '42 (XL)', color: 'Navy Blue', material: 'Poly-Cotton' },
+                    { size: '44 (XXL)', color: 'Royal Blue', material: 'Poly-Cotton' }
+                ],
+                featured: true
+            },
+            {
+                id: 'PROD-105',
+                name: 'Heavy Corrugated Shipping Boxes (5-Ply)',
+                category: 'Packaging Materials',
+                subcategory: 'Cartons & Boxes',
+                moq: 100,
+                shortDesc: 'KRAFT paper linerboard, heavy burst strength rating, shipped flat in bundles of 25.',
+                description: 'Industrial-grade packaging cartons designed for heavy freight and ecommerce dispatch. High stackability rating and edge crush resistance.',
+                material: 'Virgin Kraft Paper',
+                image: 'https://placehold.co/600x450/1E293B/FFFFFF?text=Corrugated+Box',
+                variants: [
+                    { size: '12x10x8 inch', color: 'Brown Kraft', material: '5-Ply Paper' },
+                    { size: '16x12x10 inch', color: 'Brown Kraft', material: '5-Ply Paper' },
+                    { size: '20x14x12 inch', color: 'Brown Kraft', material: '5-Ply Paper' }
+                ],
+                featured: true
+            },
+            {
+                id: 'PROD-106',
+                name: 'Stretch Wrap Film Roll (Industrial Grade)',
+                category: 'Packaging Materials',
+                subcategory: 'Pallet Packaging',
+                moq: 30,
+                shortDesc: '23 Micron thickness, 500mm width, high puncture resistance and superior cling memory.',
+                description: 'Used for pallet unitizing and bundling goods during transit. Protects against dust, moisture, and shifting loads in transit.',
+                material: 'LLDPE Plastic',
+                image: 'https://placehold.co/600x450/0F2C59/FFFFFF?text=Stretch+Wrap',
+                variants: [
+                    { size: '500mm x 400m', color: 'Transparent', material: 'LLDPE' },
+                    { size: '500mm x 400m', color: 'Black Opaque', material: 'LLDPE' }
+                ],
+                featured: true
+            }
+        ];
+
+        const DEFAULT_RFQS = [
+            {
+                id: 'RFQ-8492',
+                company: 'Apex Manufacturing Corp',
+                contact: 'Rajesh Sharma',
+                mobile: '+91 98210 54321',
+                email: 'rajesh@apexmfg.in',
+                gst: '27AAAAA0000A1Z5',
+                address: 'MIDC Industrial Area, Plot 14, Thane, Maharashtra',
+                message: 'Require urgent bulk delivery for factory expansion project. Need best wholesale quotation.',
+                date: '2026-10-02 14:30',
+                status: 'Pending',
+                items: [
+                    { id: 'PROD-101', name: 'Industrial Heavy Duty Safety Helmet', quantity: 150, variant: 'Yellow / Standard' },
+                    { id: 'PROD-102', name: 'High-Visibility Reflex Safety Vest', quantity: 300, variant: 'Neon Yellow / L' }
+                ]
+            },
+            {
+                id: 'RFQ-8488',
+                company: 'Vanguard Logistics Solutions',
+                contact: 'Sunil Patil',
+                mobile: '+91 97654 32109',
+                email: 's.patil@vanguardlogistics.com',
+                gst: '24BBBBB1111B2Z3',
+                address: 'NH-8 Bypass, Warehousing Zone, Ahmedabad, Gujarat',
+                message: 'Looking for regular monthly supply of stretch wrap and corrugated boxes.',
+                date: '2026-10-01 11:15',
+                status: 'Quoted',
+                items: [
+                    { id: 'PROD-105', name: 'Heavy Corrugated Shipping Boxes (5-Ply)', quantity: 500, variant: '16x12x10 inch / Brown Kraft' },
+                    { id: 'PROD-106', name: 'Stretch Wrap Film Roll (Industrial Grade)', quantity: 100, variant: 'Transparent / 500mm x 400m' }
+                ]
+            }
+        ];
+
+        class AdminController {
+            constructor() {
+                this.currentTab = 'dashboard';
+                this.rfqFilter = 'All';
+
+                if (!localStorage.getItem('ks_products')) {
+                    localStorage.setItem('ks_products', JSON.stringify(DEFAULT_PRODUCTS));
+                }
+                if (!localStorage.getItem('ks_categories')) {
+                    localStorage.setItem('ks_categories', JSON.stringify(DEFAULT_CATEGORIES));
+                }
+                if (!localStorage.getItem('ks_rfqs')) {
+                    localStorage.setItem('ks_rfqs', JSON.stringify(DEFAULT_RFQS));
+                }
+            }
+
+            isAuthenticated() {
+                return sessionStorage.getItem('ks_admin_auth') === 'true';
+            }
+
+            getProducts() {
+                return JSON.parse(localStorage.getItem('ks_products')) || [];
+            }
+
+            saveProducts(products) {
+                localStorage.setItem('ks_products', JSON.stringify(products));
+            }
+
+            getCategories() {
+                return JSON.parse(localStorage.getItem('ks_categories')) || [];
+            }
+
+            saveCategories(cats) {
+                localStorage.setItem('ks_categories', JSON.stringify(cats));
+            }
+
+            getRfqs() {
+                return JSON.parse(localStorage.getItem('ks_rfqs')) || [];
+            }
+
+            saveRfqs(rfqs) {
+                localStorage.setItem('ks_rfqs', JSON.stringify(rfqs));
+            }
+
+            switchTab(tab) {
+                this.currentTab = tab;
+                this.render();
+            }
+
+            render() {
+                const container = document.getElementById('admin-app');
+                if (!container) return;
+
+                if (!this.isAuthenticated()) {
+                    container.innerHTML = this.renderLogin();
+                } else {
+                    container.innerHTML = `
+                        ${this.renderHeader()}
+                        <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                            ${this.renderCurrentView()}
+                        </main>
+                        ${this.renderFooter()}
+                    `;
+                }
+            }
+
+            renderLogin() {
+                return `
+                    <div class="flex-grow flex items-center justify-center p-4 bg-slate-100">
+                        <div class="max-w-md w-full bg-white border border-slate-300 rounded-lg p-8 shadow-sm">
+                            <div class="text-center mb-6">
+                                <div class="h-14 w-14 bg-navy text-white rounded-md flex items-center justify-center mx-auto mb-3 font-bold text-xl shadow-sm">
+                                    KS
+                                </div>
+                                <h1 class="text-xl font-bold text-navy tracking-tight">Kailash Sagar Enterprise</h1>
+                                <p class="text-xs text-slate-500 font-medium mt-1 uppercase tracking-wider">Internal Administrative Control Portal</p>
+                            </div>
+
+                            <form onsubmit="handleLoginSubmit(event)" class="space-y-4 text-xs">
+                                <div>
+                                    <label class="block text-slate-700 font-bold mb-1">Username</label>
+                                    <input type="text" id="login-username" required placeholder="Enter username" class="w-full bg-slate-50 border border-slate-300 rounded p-2.5 text-xs outline-none focus:border-navy text-slate-800" autocomplete="off">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-700 font-bold mb-1">Password</label>
+                                    <input type="password" id="login-password" required placeholder="Enter password" class="w-full bg-slate-50 border border-slate-300 rounded p-2.5 text-xs outline-none focus:border-navy text-slate-800">
+                                </div>
+                                <button type="submit" class="w-full bg-navy hover:bg-navy-dark text-white font-bold py-3 rounded text-xs transition shadow-sm">
+                                    Authenticate & Access Portal
+                                </button>
+                            </form>
+                            
+                            <div class="mt-6 pt-4 border-t border-slate-200 text-center">
+                                <a href="index.html" class="text-xs text-slate-500 hover:text-navy underline">
+                                    &larr; Back to Wholesale Catalog
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderHeader() {
+                const rfqs = this.getRfqs();
+                const pendingCount = rfqs.filter(r => r.status === 'Pending').length;
+
+                return `
+                    <header class="bg-navy text-white border-b border-navy-dark sticky top-0 z-40 shadow-sm">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div class="flex flex-col md:flex-row justify-between items-center py-4 gap-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="bg-white text-navy h-10 w-10 rounded flex items-center justify-center font-bold text-base shadow">
+                                        KS
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center space-x-2">
+                                            <h1 class="font-bold text-base tracking-tight">Kailash Sagar Enterprise</h1>
+                                            <span class="bg-orange-500/20 text-orange-300 border border-orange-400/30 text-[10px] px-2 py-0.5 rounded font-mono uppercase">Admin</span>
+                                        </div>
+                                        <span class="text-xs text-slate-300">B2B Wholesale Catalog & RFQ Management</span>
+                                    </div>
+                                </div>
+
+                                <nav class="flex items-center space-x-2 sm:space-x-3 text-xs">
+                                    <button onclick="admin.switchTab('dashboard')" class="px-3.5 py-2 rounded font-medium transition ${this.currentTab === 'dashboard' ? 'bg-orange-600 text-white font-bold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-navy-light'}">
+                                        <i class="fa-solid fa-chart-pie mr-1.5"></i> Dashboard
+                                    </button>
+                                    <button onclick="admin.switchTab('products')" class="px-3.5 py-2 rounded font-medium transition ${this.currentTab === 'products' ? 'bg-orange-600 text-white font-bold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-navy-light'}">
+                                        <i class="fa-solid fa-boxes-stacked mr-1.5"></i> Products
+                                    </button>
+                                    <button onclick="admin.switchTab('categories')" class="px-3.5 py-2 rounded font-medium transition ${this.currentTab === 'categories' ? 'bg-orange-600 text-white font-bold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-navy-light'}">
+                                        <i class="fa-solid fa-folder-tree mr-1.5"></i> Categories
+                                    </button>
+                                    <button onclick="admin.switchTab('rfqs')" class="relative px-3.5 py-2 rounded font-medium transition ${this.currentTab === 'rfqs' ? 'bg-orange-600 text-white font-bold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-navy-light'}">
+                                        <i class="fa-solid fa-file-invoice mr-1.5"></i> Quotations (RFQs)
+                                        ${pendingCount > 0 ? `<span class="ml-1 bg-b2bAccent text-white px-1.5 py-0.2 rounded-full text-[10px] font-bold">${pendingCount}</span>` : ''}
+                                    </button>
+                                    <button onclick="handleLogout()" class="bg-slate-700 hover:bg-red-700 text-slate-200 hover:text-white px-3 py-2 rounded transition ml-2 font-medium" title="Logout Session">
+                                        <i class="fa-solid fa-power-off"></i>
+                                    </button>
+                                </nav>
+                            </div>
+                        </div>
+                    </header>
+                `;
+            }
+
+            renderFooter() {
+                return `
+                    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+                        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+                            <span>&copy; 2026 Kailash Sagar Enterprise — Confidential Internal Administration</span>
+                            <div class="flex space-x-4">
+                                <a href="index.html" class="hover:underline text-navy font-semibold">Open Customer Website &rarr;</a>
+                            </div>
+                        </div>
+                    </footer>
+                `;
+            }
+
+            renderCurrentView() {
+                switch(this.currentTab) {
+                    case 'dashboard':
+                        return this.renderDashboardView();
+                    case 'products':
+                        return this.renderProductsView();
+                    case 'categories':
+                        return this.renderCategoriesView();
+                    case 'rfqs':
+                        return this.renderRfqsView();
+                    default:
+                        return this.renderDashboardView();
+                }
+            }
+
+            /* --- VIEW: DASHBOARD --- */
+            renderDashboardView() {
+                const products = this.getProducts();
+                const categories = this.getCategories();
+                const rfqs = this.getRfqs();
+                const pendingRfqs = rfqs.filter(r => r.status === 'Pending');
+
+                return `
+                    <div class="space-y-8">
+                        <div>
+                            <h2 class="text-xl font-bold text-navy tracking-tight">Administrative Overview</h2>
+                            <p class="text-xs text-slate-500 mt-1">Live catalog statistics and incoming customer bulk quotation requests.</p>
+                        </div>
+
+                        <!-- KPI Summary Cards -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                            <div class="bg-white p-5 rounded border border-slate-200 shadow-xs flex flex-col justify-between">
+                                <div>
+                                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Catalog Products</span>
+                                    <div class="text-3xl font-bold text-navy mt-1">${products.length}</div>
+                                </div>
+                                <button onclick="admin.switchTab('products')" class="text-xs text-orange-600 font-semibold hover:underline text-left mt-3">
+                                    Manage Products &rarr;
+                                </button>
+                            </div>
+                            <div class="bg-white p-5 rounded border border-slate-200 shadow-xs flex flex-col justify-between">
+                                <div>
+                                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Product Categories</span>
+                                    <div class="text-3xl font-bold text-navy mt-1">${categories.length}</div>
+                                </div>
+                                <button onclick="admin.switchTab('categories')" class="text-xs text-orange-600 font-semibold hover:underline text-left mt-3">
+                                    Manage Categories &rarr;
+                                </button>
+                            </div>
+                            <div class="bg-white p-5 rounded border border-slate-200 shadow-xs flex flex-col justify-between">
+                                <div>
+                                    <span class="text-xs font-bold text-orange-600 uppercase tracking-wider">Pending Quotations</span>
+                                    <div class="text-3xl font-bold text-orange-600 mt-1">${pendingRfqs.length}</div>
+                                </div>
+                                <button onclick="admin.switchTab('rfqs')" class="text-xs text-orange-600 font-semibold hover:underline text-left mt-3">
+                                    Review Pending RFQs &rarr;
+                                </button>
+                            </div>
+                            <div class="bg-white p-5 rounded border border-slate-200 shadow-xs flex flex-col justify-between">
+                                <div>
+                                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total RFQs Received</span>
+                                    <div class="text-3xl font-bold text-navy mt-1">${rfqs.length}</div>
+                                </div>
+                                <button onclick="admin.switchTab('rfqs')" class="text-xs text-orange-600 font-semibold hover:underline text-left mt-3">
+                                    View All Records &rarr;
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Recent Quotation Inquiries Table -->
+                        <div class="bg-white border border-slate-200 rounded p-6 shadow-xs space-y-4">
+                            <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+                                <h3 class="font-bold text-navy text-sm uppercase tracking-wider">Recent Bulk Quotation Requests (RFQs)</h3>
+                                <button onclick="admin.switchTab('rfqs')" class="text-xs text-orange-600 font-bold hover:underline">
+                                    View All RFQs (${rfqs.length}) &rarr;
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs">
+                                    <thead>
+                                        <tr class="bg-slate-50 text-slate-700 border-b border-slate-200">
+                                            <th class="p-3">RFQ ID</th>
+                                            <th class="p-3">Company Name</th>
+                                            <th class="p-3">Contact</th>
+                                            <th class="p-3">Items / Units</th>
+                                            <th class="p-3">Date</th>
+                                            <th class="p-3">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100">
+                                        ${rfqs.slice(0, 5).map(r => `
+                                            <tr class="hover:bg-slate-50">
+                                                <td class="p-3 font-mono font-bold text-navy">${r.id}</td>
+                                                <td class="p-3 font-bold text-slate-800">${r.company}</td>
+                                                <td class="p-3 text-slate-600">${r.contact} <span class="text-slate-400">(${r.mobile})</span></td>
+                                                <td class="p-3 font-semibold text-slate-700">${r.items.length} items (${r.items.reduce((s,i)=>s+parseInt(i.quantity),0)} units)</td>
+                                                <td class="p-3 text-slate-500">${r.date}</td>
+                                                <td class="p-3">
+                                                    <span class="px-2.5 py-1 rounded text-[10px] font-bold ${r.status==='Pending'?'bg-orange-100 text-orange-800':r.status==='Quoted'?'bg-blue-100 text-blue-800':'bg-emerald-100 text-emerald-800'}">
+                                                        ${r.status}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            /* --- VIEW: PRODUCTS MANAGEMENT --- */
+            renderProductsView() {
+                const products = this.getProducts();
+
+                return `
+                    <div class="space-y-6">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <div>
+                                <h2 class="text-xl font-bold text-navy tracking-tight">Wholesale Products Management</h2>
+                                <p class="text-xs text-slate-500 mt-0.5">Maintain catalog inventory, MOQ thresholds, and product variants.</p>
+                            </div>
+                            <button onclick="openProductModal()" class="bg-navy hover:bg-navy-dark text-white text-xs font-semibold px-4 py-2.5 rounded shadow transition flex items-center space-x-1.5">
+                                <i class="fa-solid fa-plus text-orange-400"></i>
+                                <span>Add New Product</span>
+                            </button>
+                        </div>
+
+                        <div class="bg-white border border-slate-200 rounded shadow-xs overflow-hidden">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-700 border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-3">SKU</th>
+                                        <th class="p-3">Product Name</th>
+                                        <th class="p-3">Category</th>
+                                        <th class="p-3">Material</th>
+                                        <th class="p-3">MOQ</th>
+                                        <th class="p-3">Variants</th>
+                                        <th class="p-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    ${products.map(p => `
+                                        <tr class="hover:bg-slate-50">
+                                            <td class="p-3 font-mono font-bold text-slate-600">${p.id}</td>
+                                            <td class="p-3 font-bold text-navy">${p.name}</td>
+                                            <td class="p-3">${p.category}</td>
+                                            <td class="p-3 text-slate-600">${p.material}</td>
+                                            <td class="p-3 font-semibold text-orange-600">${p.moq} Units</td>
+                                            <td class="p-3">${p.variants.length} Options</td>
+                                            <td class="p-3 text-right space-x-2">
+                                                <button onclick="openProductModal('${p.id}')" class="text-navy hover:underline font-bold">Edit</button>
+                                                <button onclick="deleteProduct('${p.id}')" class="text-red-600 hover:underline font-bold">Delete</button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Add/Edit Product Modal -->
+                    <div id="product-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+                        <div class="bg-white rounded border border-slate-200 p-6 max-w-lg w-full space-y-4 max-h-[90vh] overflow-y-auto">
+                            <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+                                <h3 id="modal-title" class="font-bold text-navy text-sm uppercase tracking-wider">Add Wholesale Product</h3>
+                                <button onclick="closeProductModal()" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                            <form onsubmit="saveProduct(event)" class="space-y-3 text-xs">
+                                <input type="hidden" id="form-prod-id">
+                                <div>
+                                    <label class="block text-slate-700 font-bold mb-1">Product Name *</label>
+                                    <input type="text" id="form-name" required class="w-full bg-slate-50 border border-slate-300 rounded p-2 outline-none focus:border-navy">
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-slate-700 font-bold mb-1">Category *</label>
+                                        <select id="form-category" class="w-full bg-slate-50 border border-slate-300 rounded p-2 outline-none focus:border-navy">
+                                            <option value="Safety Products">Safety Products</option>
+                                            <option value="Garments & Textiles">Garments & Textiles</option>
+                                            <option value="Industrial Supplies">Industrial Supplies</option>
+                                            <option value="Packaging Materials">Packaging Materials</option>
+                                            <option value="Hardware & Tools">Hardware & Tools</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-slate-700 font-bold mb-1">MOQ (Units) *</label>
+                                        <input type="number" id="form-moq" required min="1" value="25" class="w-full bg-slate-50 border border-slate-300 rounded p-2 outline-none focus:border-navy">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-slate-700 font-bold mb-1">Material Specification *</label>
+                                    <input type="text" id="form-material" required placeholder="e.g. ABS Plastic" class="w-full bg-slate-50 border border-slate-300 rounded p-2 outline-none focus:border-navy">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-700 font-bold mb-1">Short Description *</label>
+                                    <textarea id="form-shortdesc" required rows="2" class="w-full bg-slate-50 border border-slate-300 rounded p-2 outline-none focus:border-navy"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-slate-700 font-bold mb-1">Full Technical Description *</label>
+                                    <textarea id="form-desc" required rows="3" class="w-full bg-slate-50 border border-slate-300 rounded p-2 outline-none focus:border-navy"></textarea>
+                                </div>
+                                <div class="pt-3 border-t border-slate-200 flex justify-end space-x-2">
+                                    <button type="button" onclick="closeProductModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded">Cancel</button>
+                                    <button type="submit" class="bg-navy text-white px-4 py-2 rounded font-semibold">Save Product</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                `;
+            }
+
+            /* --- VIEW: CATEGORIES MANAGEMENT --- */
+            renderCategoriesView() {
+                const categories = this.getCategories();
+
+                return `
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h2 class="text-xl font-bold text-navy tracking-tight">Wholesale Categories Directory</h2>
+                                <p class="text-xs text-slate-500 mt-0.5">Organize product lines and commercial sectors.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white border border-slate-200 rounded shadow-xs overflow-hidden">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-700 border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-3">Category Name</th>
+                                        <th class="p-3">Description</th>
+                                        <th class="p-3">Products Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    ${categories.map(c => `
+                                        <tr class="hover:bg-slate-50">
+                                            <td class="p-3 font-bold text-navy">${c.name}</td>
+                                            <td class="p-3 text-slate-600">${c.desc}</td>
+                                            <td class="p-3 font-semibold text-orange-600">${c.count} Items</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            /* --- VIEW: RFQS MANAGEMENT --- */
+            renderRfqsView() {
+                const rfqs = this.getRfqs();
+                const filtered = this.rfqFilter === 'All' ? rfqs : rfqs.filter(r => r.status === this.rfqFilter);
+
+                return `
+                    <div class="space-y-6">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <div>
+                                <h2 class="text-xl font-bold text-navy tracking-tight">Quotation Requests (RFQs) Management</h2>
+                                <p class="text-xs text-slate-500 mt-0.5">Review client business requirements, view item breakdowns, and update quotation statuses.</p>
+                            </div>
+                            <div class="flex items-center space-x-2 text-xs">
+                                <span class="font-bold text-slate-600">Filter Status:</span>
+                                <select onchange="admin.rfqFilter = this.value; admin.render();" class="bg-white border border-slate-300 rounded px-2.5 py-1.5 font-medium outline-none focus:border-navy">
+                                    <option value="All" ${this.rfqFilter==='All'?'selected':''}>All RFQs (${rfqs.length})</option>
+                                    <option value="Pending" ${this.rfqFilter==='Pending'?'selected':''}>Pending</option>
+                                    <option value="Reviewed" ${this.rfqFilter==='Reviewed'?'selected':''}>Reviewed</option>
+                                    <option value="Quoted" ${this.rfqFilter==='Quoted'?'selected':''}>Quoted</option>
+                                    <option value="Completed" ${this.rfqFilter==='Completed'?'selected':''}>Completed</option>
+                                    <option value="Rejected" ${this.rfqFilter==='Rejected'?'selected':''}>Rejected</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        ${filtered.length === 0 ? `
+                            <div class="bg-white p-12 text-center rounded border border-slate-200">
+                                <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-2"></i>
+                                <h3 class="font-bold text-navy text-sm">No RFQs Found</h3>
+                                <p class="text-xs text-slate-500">There are no quotation requests with status "${this.rfqFilter}".</p>
+                            </div>
+                        ` : `
+                            <div class="space-y-4">
+                                ${filtered.map(r => `
+                                    <div class="bg-white border border-slate-200 rounded p-6 shadow-xs space-y-4">
+                                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-200 pb-3">
+                                            <div>
+                                                <span class="font-mono font-bold text-navy text-sm mr-2">${r.id}</span>
+                                                <span class="text-xs text-slate-500">Submitted: ${r.date}</span>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <label class="text-xs font-bold text-slate-700">Status:</label>
+                                                <select onchange="updateRfqStatus('${r.id}', this.value)" class="bg-slate-50 border border-slate-300 rounded p-1.5 text-xs font-bold outline-none focus:border-navy">
+                                                    <option value="Pending" ${r.status==='Pending'?'selected':''}>Pending</option>
+                                                    <option value="Reviewed" ${r.status==='Reviewed'?'selected':''}>Reviewed</option>
+                                                    <option value="Quoted" ${r.status==='Quoted'?'selected':''}>Quoted</option>
+                                                    <option value="Completed" ${r.status==='Completed'?'selected':''}>Completed</option>
+                                                    <option value="Rejected" ${r.status==='Rejected'?'selected':''}>Rejected</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
+                                            <div>
+                                                <strong class="text-slate-700 block mb-1 uppercase tracking-wider text-[11px]">Company / Contact</strong>
+                                                <div class="font-bold text-navy text-sm">${r.company}</div>
+                                                <div class="text-slate-700 mt-0.5"><i class="fa-solid fa-user mr-1 text-slate-400"></i> ${r.contact}</div>
+                                                <div class="text-slate-700"><i class="fa-solid fa-phone mr-1 text-slate-400"></i> ${r.mobile}</div>
+                                                <div class="text-slate-700"><i class="fa-solid fa-envelope mr-1 text-slate-400"></i> ${r.email}</div>
+                                                <div class="text-slate-500 mt-1">GSTIN: <strong class="text-slate-700">${r.gst}</strong></div>
+                                            </div>
+
+                                            <div>
+                                                <strong class="text-slate-700 block mb-1 uppercase tracking-wider text-[11px]">Destination & Requirements</strong>
+                                                <div class="text-slate-600 bg-slate-50 p-2.5 rounded border border-slate-200 mb-2">
+                                                    <i class="fa-solid fa-location-dot text-orange-600 mr-1"></i> ${r.address}
+                                                </div>
+                                                <div class="text-slate-600">
+                                                    <strong class="text-slate-700">Client Note:</strong> ${r.message}
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <strong class="text-slate-700 block mb-1 uppercase tracking-wider text-[11px]">Requested Products (${r.items.length})</strong>
+                                                <div class="space-y-1.5 max-h-36 overflow-y-auto">
+                                                    ${r.items.map(i => `
+                                                        <div class="bg-slate-50 p-2 rounded border border-slate-200">
+                                                            <div class="font-bold text-navy">${i.name}</div>
+                                                            <div class="text-[11px] text-slate-500">Variant: ${i.variant} | Qty: <strong class="text-orange-600">${i.quantity} Units</strong></div>
+                                                        </div>
+                                                    `).join('')}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `}
+                    </div>
+                `;
+            }
+        }
+
+        const admin = new AdminController();
+
+        /* ==========================================================
+           HANDLERS & ACTIONS
+           ========================================================== */
+
+        function handleLoginSubmit(event) {
+            event.preventDefault();
+            const u = document.getElementById('login-username').value.trim();
+            const p = document.getElementById('login-password').value;
+
+            if (u === 'admin' && p === 'admin@123456789') {
+                sessionStorage.setItem('ks_admin_auth', 'true');
+                showToast('Authentication successful. Welcome, Admin.');
+                admin.render();
+            } else {
+                showToast('Access Denied: Invalid credentials.', 'error');
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('ks_admin_auth');
+            showToast('Logged out successfully.');
+            admin.render();
+        }
+
+        function updateRfqStatus(rfqId, newStatus) {
+            const rfqs = admin.getRfqs();
+            const r = rfqs.find(x => x.id === rfqId);
+            if (r) {
+                r.status = newStatus;
+                admin.saveRfqs(rfqs);
+                showToast(`RFQ ${rfqId} updated to "${newStatus}".`);
+            }
+        }
+
+        function openProductModal(productId = null) {
+            const modal = document.getElementById('product-modal');
+            modal.classList.remove('hidden');
+            if (productId) {
+                const products = admin.getProducts();
+                const p = products.find(x => x.id === productId);
+                document.getElementById('modal-title').innerText = 'Edit Product: ' + p.id;
+                document.getElementById('form-prod-id').value = p.id;
+                document.getElementById('form-name').value = p.name;
+                document.getElementById('form-category').value = p.category;
+                document.getElementById('form-moq').value = p.moq;
+                document.getElementById('form-material').value = p.material;
+                document.getElementById('form-shortdesc').value = p.shortDesc;
+                document.getElementById('form-desc').value = p.description;
+            } else {
+                document.getElementById('modal-title').innerText = 'Add New Wholesale Product';
+                document.getElementById('form-prod-id').value = '';
+                document.getElementById('form-name').value = '';
+                document.getElementById('form-category').value = 'Safety Products';
+                document.getElementById('form-moq').value = '25';
+                document.getElementById('form-material').value = '';
+                document.getElementById('form-shortdesc').value = '';
+                document.getElementById('form-desc').value = '';
+            }
+        }
+
+        function closeProductModal() {
+            const modal = document.getElementById('product-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function saveProduct(event) {
+            event.preventDefault();
+            const id = document.getElementById('form-prod-id').value;
+            const products = admin.getProducts();
+
+            const name = document.getElementById('form-name').value;
+            const category = document.getElementById('form-category').value;
+            const moq = parseInt(document.getElementById('form-moq').value);
+            const material = document.getElementById('form-material').value;
+            const shortDesc = document.getElementById('form-shortdesc').value;
+            const description = document.getElementById('form-desc').value;
+
+            if (id) {
+                const p = products.find(x => x.id === id);
+                if (p) {
+                    p.name = name;
+                    p.category = category;
+                    p.moq = moq;
+                    p.material = material;
+                    p.shortDesc = shortDesc;
+                    p.description = description;
+                }
+                showToast('Product updated successfully.');
+            } else {
+                const newId = 'PROD-' + Math.floor(100 + Math.random() * 900);
+                products.push({
+                    id: newId,
+                    name: name,
+                    category: category,
+                    subcategory: 'General Wholesale',
+                    moq: moq,
+                    shortDesc: shortDesc,
+                    description: description,
+                    material: material,
+                    image: 'https://placehold.co/600x450/0F2C59/FFFFFF?text=' + encodeURIComponent(name),
+                    variants: [{ size: 'Standard', color: 'Default', material: material }],
+                    featured: false
+                });
+                showToast('New product added to catalog.');
+            }
+
+            admin.saveProducts(products);
+            closeProductModal();
+            admin.render();
+        }
+
+        function deleteProduct(productId) {
+            if (!confirm('Are you sure you want to delete this product?')) return;
+            let products = admin.getProducts();
+            products = products.filter(p => p.id !== productId);
+            admin.saveProducts(products);
+            showToast('Product deleted.');
+            admin.render();
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = `px-4 py-3 rounded shadow-lg text-xs font-medium text-white transition transform translate-y-2 opacity-0 flex items-center space-x-2 ${type === 'success' ? 'bg-navy border-l-4 border-orange-500' : 'bg-slate-800 border-l-4 border-red-500'}`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check text-orange-400' : 'fa-circle-exclamation text-red-400'}"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            admin.render();
+        };
+    </script>
+</body>
+</html>
