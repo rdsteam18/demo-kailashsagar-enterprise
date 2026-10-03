@@ -1,0 +1,37 @@
+[
+  {
+    "id": "cat-garments",
+    "name": "Garments",
+    "slug": "garments",
+    "description": "Wholesale garments and apparel products.",
+    "image": "/images/categories/garments.jpg"
+  },
+  {
+    "id": "cat-safety",
+    "name": "Safety Products",
+    "slug": "safety-products",
+    "description": "Safety equipment and workplace protection products.",
+    "image": "/images/categories/safety.jpg"
+  },
+  {
+    "id": "cat-industrial",
+    "name": "Industrial Products",
+    "slug": "industrial-products",
+    "description": "Industrial and business-use products.",
+    "image": "/images/categories/industrial.jpg"
+  },
+  {
+    "id": "cat-packaging",
+    "name": "Packaging",
+    "slug": "packaging",
+    "description": "Packaging products for wholesale requirements.",
+    "image": "/images/categories/packaging.jpg"
+  },
+  {
+    "id": "cat-hardware",
+    "name": "Hardware",
+    "slug": "hardware",
+    "description": "Hardware products for business and bulk requirements.",
+    "image": "/images/categories/hardware.jpg"
+  }
+]

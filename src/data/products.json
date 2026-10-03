@@ -1,0 +1,369 @@
+[
+  {
+    "id": "prod-001",
+    "name": "Premium Cotton T-Shirt",
+    "slug": "premium-cotton-tshirt",
+    "categoryId": "cat-garments",
+    "subCategory": "T-Shirts",
+    "description": "Comfortable cotton T-shirt suitable for wholesale and bulk business requirements.",
+    "moq": 50,
+    "material": "Cotton",
+    "images": [
+      "/images/products/cotton-tshirt-1.jpg",
+      "/images/products/cotton-tshirt-2.jpg"
+    ],
+    "variants": [
+      {
+        "id": "var-001",
+        "size": "S",
+        "color": "Black",
+        "material": "Cotton"
+      },
+      {
+        "id": "var-002",
+        "size": "M",
+        "color": "Black",
+        "material": "Cotton"
+      },
+      {
+        "id": "var-003",
+        "size": "L",
+        "color": "Black",
+        "material": "Cotton"
+      },
+      {
+        "id": "var-004",
+        "size": "XL",
+        "color": "White",
+        "material": "Cotton"
+      }
+    ]
+  },
+  {
+    "id": "prod-002",
+    "name": "Formal Business Shirt",
+    "slug": "formal-business-shirt",
+    "categoryId": "cat-garments",
+    "subCategory": "Shirts",
+    "description": "Formal shirt designed for business uniforms and bulk requirements.",
+    "moq": 30,
+    "material": "Cotton Blend",
+    "images": [
+      "/images/products/business-shirt-1.jpg"
+    ],
+    "variants": [
+      {
+        "id": "var-005",
+        "size": "M",
+        "color": "White",
+        "material": "Cotton Blend"
+      },
+      {
+        "id": "var-006",
+        "size": "L",
+        "color": "Blue",
+        "material": "Cotton Blend"
+      },
+      {
+        "id": "var-007",
+        "size": "XL",
+        "color": "White",
+        "material": "Cotton Blend"
+      }
+    ]
+  },
+  {
+    "id": "prod-003",
+    "name": "Industrial Safety Helmet",
+    "slug": "industrial-safety-helmet",
+    "categoryId": "cat-safety",
+    "subCategory": "Helmets",
+    "description": "Protective safety helmet for industrial and workplace use.",
+    "moq": 25,
+    "material": "ABS",
+    "images": [
+      "/images/products/safety-helmet-1.jpg"
+    ],
+    "variants": [
+      {
+        "id": "var-008",
+        "size": "Universal",
+        "color": "Yellow",
+        "material": "ABS"
+      },
+      {
+        "id": "var-009",
+        "size": "Universal",
+        "color": "White",
+        "material": "ABS"
+      },
+      {
+        "id": "var-010",
+        "size": "Universal",
+        "color": "Blue",
+        "material": "ABS"
+      }
+    ]
+  },
+  {
+    "id": "prod-004",
+    "name": "Protective Industrial Gloves",
+    "slug": "protective-industrial-gloves",
+    "categoryId": "cat-safety",
+    "subCategory": "Gloves",
+    "description": "Durable protective gloves suitable for industrial applications.",
+    "moq": 100,
+    "material": "Nylon",
+    "images": [
+      "/images/products/industrial-gloves-1.jpg"
+    ],
+    "variants": [
+      {
+        "id": "var-011",
+        "size": "M",
+        "color": "Grey",
+        "material": "Nylon"
+      },
+      {
+        "id": "var-012",
+        "size": "L",
+        "color": "Grey",
+        "material": "Nylon"
+      },
+      {
+        "id": "var-013",
+        "size": "XL",
+        "color": "Black",
+        "material": "Nylon"
+      }
+    ]
+  },
+  {
+    "id": "prod-005",
+    "name": "Safety Reflective Vest",
+    "slug": "safety-reflective-vest",
+    "categoryId": "cat-safety",
+    "subCategory": "Safety Wear",
+    "description": "High-visibility reflective vest for workplace safety.",
+    "moq": 50,
+    "material": "Polyester",
+    "images": [
+      "/images/products/reflective-vest-1.jpg"
+    ],
+    "variants": [
+      {
+        "id": "var-014",
+        "size": "M",
+        "color": "Orange",
+        "material": "Polyester"
+      },
+      {
+        "id": "var-015",
+        "size": "L",
+        "color": "Yellow",
+        "material": "Polyester"
+      },
+      {
+        "id": "var-016",
+        "size": "XL",
+        "color": "Orange",
+        "material": "Polyester"
+      }
+    ]
+  },
+  {
+    "id": "prod-006",
+    "name": "Industrial Storage Container",
+    "slug": "industrial-storage-container",
+    "categoryId": "cat-industrial",
+    "subCategory": "Storage",
+    "description": "Reusable storage container for industrial and commercial applications.",
+    "moq": 20,
+    "material": "HDPE",
+    "images": [
+      "/images/products/storage-container-1.jpg"
+    ],
+    "variants": [
+      {
+        "id": "var-017",
+        "size": "10 L",
+        "color": "Blue",
+        "material": "HDPE"
+      },
+      {
+        "id": "var-018",
+        "size": "20 L",
+        "color": "Blue",
+        "material": "HDPE"
+      }
+    ]
+  },
+  {
+    "id": "prod-007",
+    "name": "Heavy Duty Plastic Crate",
+    "slug": "heavy-duty-plastic-crate",
+    "categoryId": "cat-industrial",
+    "subCategory": "Storage",
+    "description": "Heavy-duty plastic crate for commercial storage and transportation.",
+    "moq": 25,
+    "material": "Plastic",
+    "images": [
+      "/images/products/plastic-crate-1.jpg"
+    ],
+    "variants": [
+      {
+        "id": "var-019",
+        "size": "Medium",
+        "color": "Blue",
+        "material": "Plastic"
+      },
+      {
+        "id": "var-020",
+        "size": "Large",
+        "color": "Black",
+        "material": "Plastic"
+      }
+    ]
+  },
+  {
+    "id": "prod-008",
+    "name": "Corrugated Shipping Box",
+    "slug": "corrugated-shipping-box",
+    "categoryId": "cat-packaging",
+    "subCategory": "Boxes",
+    "description": "Corrugated packaging box suitable for shipping and business use.",
+    "moq": 100,
+    "material": "Corrugated Paper",
+    "images": [
+      "/images/products/shipping-box-1.jpg"
+    ],
+    "variants": [
+      {
+        "id": "var-021",
+        "size": "Small",
+        "color": "Brown",
+        "material": "Corrugated Paper"
+      },
+      {
+        "id": "var-022",
+        "size": "Medium",
+        "color": "Brown",
+        "material": "Corrugated Paper"
+      },
+      {
+        "id": "var-023",
+        "size": "Large",
+        "color": "Brown",
+        "material": "Corrugated Paper"
+      }
+    ]
+  },
+  {
+    "id": "prod-009",
+    "name": "Stretch Packaging Film",
+    "slug": "stretch-packaging-film",
+    "categoryId": "cat-packaging",
+    "subCategory": "Packaging Film",
+    "description": "Stretch film for packaging, wrapping and transportation requirements.",
+    "moq": 50,
+    "material": "LLDPE",
+    "images": [
+      "/images/products/stretch-film-1.jpg"
+    ],
+    "variants": [
+      {
+        "id": "var-024",
+        "size": "500 mm",
+        "color": "Transparent",
+        "material": "LLDPE"
+      }
+    ]
+  },
+  {
+    "id": "prod-010",
+    "name": "Industrial Fastener Set",
+    "slug": "industrial-fastener-set",
+    "categoryId": "cat-hardware",
+    "subCategory": "Fasteners",
+    "description": "Industrial fastener set for general commercial and hardware requirements.",
+    "moq": 100,
+    "material": "Stainless Steel",
+    "images": [
+      "/images/products/fastener-set-1.jpg"
+    ],
+    "variants": [
+      {
+        "id": "var-025",
+        "size": "M6",
+        "color": "Silver",
+        "material": "Stainless Steel"
+      },
+      {
+        "id": "var-026",
+        "size": "M8",
+        "color": "Silver",
+        "material": "Stainless Steel"
+      }
+    ]
+  },
+  {
+    "id": "prod-011",
+    "name": "Heavy Duty Utility Tape",
+    "slug": "heavy-duty-utility-tape",
+    "categoryId": "cat-hardware",
+    "subCategory": "Tools & Supplies",
+    "description": "Utility tape suitable for industrial packaging and maintenance work.",
+    "moq": 50,
+    "material": "PVC",
+    "images": [
+      "/images/products/utility-tape-1.jpg"
+    ],
+    "variants": [
+      {
+        "id": "var-027",
+        "size": "48 mm",
+        "color": "Black",
+        "material": "PVC"
+      },
+      {
+        "id": "var-028",
+        "size": "48 mm",
+        "color": "Brown",
+        "material": "PVC"
+      }
+    ]
+  },
+  {
+    "id": "prod-012",
+    "name": "Commercial Work Trousers",
+    "slug": "commercial-work-trousers",
+    "categoryId": "cat-garments",
+    "subCategory": "Workwear",
+    "description": "Durable work trousers suitable for uniforms and industrial teams.",
+    "moq": 40,
+    "material": "Cotton Blend",
+    "images": [
+      "/images/products/work-trousers-1.jpg"
+    ],
+    "variants": [
+      {
+        "id": "var-029",
+        "size": "M",
+        "color": "Navy Blue",
+        "material": "Cotton Blend"
+      },
+      {
+        "id": "var-030",
+        "size": "L",
+        "color": "Navy Blue",
+        "material": "Cotton Blend"
+      },
+      {
+        "id": "var-031",
+        "size": "XL",
+        "color": "Black",
+        "material": "Cotton Blend"
+      }
+    ]
+  }
+]

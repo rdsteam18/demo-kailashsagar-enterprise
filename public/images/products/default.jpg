@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450" viewBox="0 0 600 450">
+  <rect width="600" height="450" fill="#eef3ef"/>
+  <rect x="230" y="145" width="140" height="110" rx="12" fill="#d9e5dc" stroke="#176b3a" stroke-width="2.5" stroke-dasharray="6 4"/>
+  <path d="M260 215 L285 185 L310 210 L335 175 L360 215 Z" fill="#176b3a" opacity="0.35"/>
+  <circle cx="280" cy="175" r="10" fill="#176b3a" opacity="0.4"/>
+  <text x="300" y="295" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="#176b3a" text-anchor="middle" letter-spacing="1">KAILASH SAGAR</text>
+  <text x="300" y="320" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#66706a" text-anchor="middle" letter-spacing="1.5">B2B WHOLESALE PRODUCT</text>
+</svg>
