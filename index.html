@@ -1,13 +1,2340 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kailash Sagar Enterprise — B2B Wholesale</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kailash Sagar Enterprise | B2B Wholesale Product Catalog & Quotation Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for professional B2B icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            DEFAULT: '#0F2C59',
+                            dark: '#0A1D37',
+                            light: '#1D4ED8'
+                        },
+                        slateGray: {
+                            DEFAULT: '#4B5563',
+                            light: '#9CA3AF',
+                            dark: '#1F2937',
+                            bg: '#F9FAFB'
+                        },
+                        b2bAccent: {
+                            DEFAULT: '#C2410C', // Professional burnt orange / rust accent for CTAs
+                            hover: '#9A3412'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .watermark-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            background-image: repeating-linear-gradient(
+                -45deg,
+                #0F2C59,
+                #0F2C59 120px,
+                transparent 120px,
+                transparent 240px
+            );
+            background-size: 340px 340px;
+        }
+        .watermark-text {
+            position: fixed;
+            bottom: 12px;
+            right: 16px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            color: rgba(15, 44, 89, 0.45);
+            pointer-events: none;
+            z-index: 9998;
+            text-transform: uppercase;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="h-full bg-slateGray-bg text-slateGray-dark font-sans antialiased flex flex-col justify-between selection:bg-navy selection:text-white">
+
+    <!-- Subtle Demo Watermark -->
+    <div class="watermark-overlay"></div>
+    <div class="watermark-text">DJP TECH • DEMO • NOT FOR PRODUCTION</div>
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container" class="fixed top-20 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <!-- Top Business Announcement Bar -->
+    <header class="bg-navy-dark text-slate-300 text-xs py-2 px-4 border-b border-navy">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="flex items-center space-y-1 sm:space-y-0 space-x-4 text-center sm:text-left">
+                <span><i class="fa-solid fa-building mr-1.5 text-orange-400"></i><strong>Kailash Sagar Enterprise</strong> - Established B2B Wholesale Supplier & Manufacturer</span>
+                <span class="hidden md:inline text-slate-500">|</span>
+                <span class="hidden md:inline"><i class="fa-solid fa-phone mr-1 text-slate-400"></i> +91 (022) 2855-4920</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span><i class="fa-solid fa-envelope mr-1 text-slate-400"></i> bulk@kailashsagarenterprise.com</span>
+                <button onclick="router.navigateTo('adminLogin')" class="text-orange-400 hover:text-orange-300 font-medium underline transition">
+                    <i class="fa-solid fa-lock mr-1"></i> Admin Portal
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Professional B2B Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <!-- Company Logo -->
+                <div class="flex items-center cursor-pointer space-x-3" onclick="router.navigateTo('home')">
+                    <div class="bg-navy text-white h-12 w-12 rounded flex items-center justify-center font-bold text-xl shadow-inner border border-navy-dark">
+                        KS
+                    </div>
+                    <div>
+                        <span class="block font-bold text-lg text-navy tracking-tight leading-none">KAILASH SAGAR</span>
+                        <span class="text-xs font-semibold uppercase tracking-widest text-slateGray">Enterprise • Wholesale</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Menu -->
+                <nav class="hidden lg:flex items-center space-x-8">
+                    <button onclick="router.navigateTo('home')" id="nav-home" class="nav-link font-medium text-sm text-slate-700 hover:text-navy transition py-2">Home</button>
+                    <button onclick="router.navigateTo('products')" id="nav-products" class="nav-link font-medium text-sm text-slate-700 hover:text-navy transition py-2">Products</button>
+                    <button onclick="router.navigateTo('categories')" id="nav-categories" class="nav-link font-medium text-sm text-slate-700 hover:text-navy transition py-2">Categories</button>
+                    <button onclick="router.navigateTo('about')" id="nav-about" class="nav-link font-medium text-sm text-slate-700 hover:text-navy transition py-2">About Us</button>
+                    <button onclick="router.navigateTo('contact')" id="nav-contact" class="nav-link font-medium text-sm text-slate-700 hover:text-navy transition py-2">Contact</button>
+                </nav>
+
+                <!-- Header Actions (Search & Quotation List) -->
+                <div class="flex items-center space-x-4">
+                    <!-- Quick Search Trigger -->
+                    <div class="hidden md:flex items-center bg-slate-100 border border-slate-300 rounded px-3 py-1.5 focus-within:border-navy transition w-60">
+                        <i class="fa-solid fa-search text-slate-400 mr-2 text-sm"></i>
+                        <input type="text" id="header-search-input" placeholder="Search catalog SKU, name..." class="bg-transparent text-sm w-full outline-none text-slate-800 placeholder-slate-400" onkeydown="if(event.key==='Enter') { router.searchQuery=this.value; router.navigateTo('products'); }">
+                    </div>
+
+                    <!-- B2B Quotation List Cart Button -->
+                    <button onclick="router.navigateTo('quotationList')" class="relative flex items-center space-x-2 bg-navy hover:bg-navy-dark text-white px-4 py-2.5 rounded font-medium text-sm shadow transition">
+                        <i class="fa-solid fa-file-invoice-dollar text-orange-400 text-base"></i>
+                        <span class="hidden sm:inline">Quotation List</span>
+                        <span id="header-quote-count" class="bg-b2bAccent text-white text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                    </button>
+
+                    <!-- Mobile Menu Button -->
+                    <button onclick="toggleMobileMenu()" class="lg:hidden p-2 text-slate-700 hover:text-navy">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-4 space-y-2">
+            <div class="flex items-center bg-slate-100 border border-slate-300 rounded px-3 py-1.5 mb-3">
+                <i class="fa-solid fa-search text-slate-400 mr-2 text-sm"></i>
+                <input type="text" id="mobile-search-input" placeholder="Search products..." class="bg-transparent text-sm w-full outline-none text-slate-800" onkeydown="if(event.key==='Enter') { router.searchQuery=this.value; toggleMobileMenu(); router.navigateTo('products'); }">
+            </div>
+            <button onclick="router.navigateTo('home'); toggleMobileMenu();" class="block w-full text-left py-2 px-3 rounded hover:bg-slate-100 font-medium text-sm">Home</button>
+            <button onclick="router.navigateTo('products'); toggleMobileMenu();" class="block w-full text-left py-2 px-3 rounded hover:bg-slate-100 font-medium text-sm">Products Catalog</button>
+            <button onclick="router.navigateTo('categories'); toggleMobileMenu();" class="block w-full text-left py-2 px-3 rounded hover:bg-slate-100 font-medium text-sm">Categories</button>
+            <button onclick="router.navigateTo('about'); toggleMobileMenu();" class="block w-full text-left py-2 px-3 rounded hover:bg-slate-100 font-medium text-sm">About Company</button>
+            <button onclick="router.navigateTo('contact'); toggleMobileMenu();" class="block w-full text-left py-2 px-3 rounded hover:bg-slate-100 font-medium text-sm">Contact Us</button>
+        </div>
+    </header>
+
+    <!-- Main View Dynamic Container -->
+    <main id="app-container" class="flex-grow">
+        <!-- Dynamic views are injected here -->
+    </main>
+
+    <!-- Professional B2B Footer -->
+    <footer class="bg-navy-dark text-slate-300 border-t border-navy text-sm mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="bg-white text-navy h-10 w-10 rounded flex items-center justify-center font-bold text-lg">
+                            KS
+                        </div>
+                        <span class="font-bold text-white text-lg tracking-tight">KAILASH SAGAR</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                        Established B2B wholesale distributor and manufacturer representative supplying high-grade industrial safety gear, garments, packaging, and hardware supplies to commercial enterprises across India and global markets.
+                    </p>
+                    <p class="text-xs text-orange-400 font-medium"><i class="fa-solid fa-shield-halved mr-1"></i> Verified B2B Wholesale Partner</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4 text-xs uppercase tracking-wider border-b border-slate-700 pb-2">Product Categories</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#" onclick="router.filterCategory='Safety Products'; router.navigateTo('products'); return false;" class="hover:text-white transition">Industrial Safety Products</a></li>
+                        <li><a href="#" onclick="router.filterCategory='Garments & Textiles'; router.navigateTo('products'); return false;" class="hover:text-white transition">Garments & Uniform Fabrics</a></li>
+                        <li><a href="#" onclick="router.filterCategory='Industrial Supplies'; router.navigateTo('products'); return false;" class="hover:text-white transition">Heavy Industrial Supplies</a></li>
+                        <li><a href="#" onclick="router.filterCategory='Packaging Materials'; router.navigateTo('products'); return false;" class="hover:text-white transition">Commercial Packaging</a></li>
+                        <li><a href="#" onclick="router.filterCategory='Hardware & Tools'; router.navigateTo('products'); return false;" class="hover:text-white transition">Hardware & Hand Tools</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4 text-xs uppercase tracking-wider border-b border-slate-700 pb-2">Quick Navigation</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#" onclick="router.navigateTo('home'); return false;" class="hover:text-white transition">Home Page</a></li>
+                        <li><a href="#" onclick="router.navigateTo('products'); return false;" class="hover:text-white transition">Full Product Catalog</a></li>
+                        <li><a href="#" onclick="router.navigateTo('quotationList'); return false;" class="hover:text-white transition">View Quotation List</a></li>
+                        <li><a href="#" onclick="router.navigateTo('about'); return false;" class="hover:text-white transition">Company Profile</a></li>
+                        <li><a href="#" onclick="router.navigateTo('contact'); return false;" class="hover:text-white transition">Enquiry & Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4 text-xs uppercase tracking-wider border-b border-slate-700 pb-2">Head Office</h4>
+                    <p class="text-xs text-slate-400 mb-2">
+                        <i class="fa-solid fa-location-dot text-orange-400 mr-2"></i>Plot No. 42, Sagar Industrial Estate, Near Express Highway, Andheri East, Mumbai - 400093, India
+                    </p>
+                    <p class="text-xs text-slate-400 mb-2">
+                        <i class="fa-solid fa-phone text-orange-400 mr-2"></i>+91 (022) 2855-4920 / 4921
+                    </p>
+                    <p class="text-xs text-slate-400 mb-4">
+                        <i class="fa-solid fa-envelope text-orange-400 mr-2"></i>quotations@kailashsagarenterprise.com
+                    </p>
+                    <div class="pt-2 border-t border-slate-800">
+                        <button onclick="router.navigateTo('adminLogin')" class="text-xs bg-navy text-slate-300 hover:text-white px-3 py-1.5 rounded border border-slate-700 transition">
+                            <i class="fa-solid fa-user-shield mr-1.5 text-orange-400"></i> Admin Access
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 pt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500">
+                <p>&copy; 2026 Kailash Sagar Enterprise. All Rights Reserved. B2B Wholesale & RFQ Portal.</p>
+                <div class="flex space-x-6 mt-4 sm:mt-0">
+                    <span class="text-slate-400">GSTIN: 27AABCK1234F1Z9</span>
+                    <span>Terms of Bulk Supply</span>
+                    <span>Privacy Policy</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Application JavaScript Logic & State Management -->
+    <script>
+        /* ==========================================================
+           DATA STORE & MOCK DATABASE (LocalStorage Backed)
+           ========================================================== */
+
+        const DEFAULT_CATEGORIES = [
+            { id: 'cat-1', name: 'Safety Products', count: 24, image: 'https://placehold.co/400x300/0F2C59/FFFFFF?text=Safety+Gear', desc: 'Certified industrial helmets, safety harnesses, high-visibility vests & footwear.' },
+            { id: 'cat-2', name: 'Garments & Textiles', count: 32, image: 'https://placehold.co/400x300/1E3A8A/FFFFFF?text=Garments', desc: 'Bulk corporate cotton t-shirts, boiler suits, industrial overalls & uniforms.' },
+            { id: 'cat-3', name: 'Industrial Supplies', count: 18, image: 'https://placehold.co/400x300/334155/FFFFFF?text=Industrial', desc: 'Heavy duty rubber mats, industrial lubricants, safety tapes & warehouse containers.' },
+            { id: 'cat-4', name: 'Packaging Materials', count: 26, image: 'https://placehold.co/400x300/475569/FFFFFF?text=Packaging', desc: 'Heavy corrugated boxes, stretch wrap rolls, PP strapping rolls & bubble films.' },
+            { id: 'cat-5', name: 'Hardware & Tools', count: 15, image: 'https://placehold.co/400x300/1E293B/FFFFFF?text=Hardware', desc: 'Professional hand tools, industrial fasteners, heavy wrenches & drill bits.' }
+        ];
+
+        const DEFAULT_PRODUCTS = [
+            {
+                id: 'PROD-101',
+                name: 'Industrial Heavy Duty Safety Helmet',
+                category: 'Safety Products',
+                subcategory: 'Head Protection',
+                moq: 25,
+                shortDesc: 'ABS material construction, 6-point ratchet suspension, IS:2925 certified for high impact resistance.',
+                description: 'Designed for heavy manufacturing, construction, and mining sites. High-density polyethylene shell offers superior shock absorption and resistance to penetration. Features universal slot attachments for earmuffs and face shields.',
+                material: 'ABS Plastic / HDPE',
+                image: 'https://placehold.co/600x450/0F2C59/FFFFFF?text=Safety+Helmet',
+                variants: [
+                    { size: 'Standard', color: 'Yellow', material: 'ABS' },
+                    { size: 'Standard', color: 'White', material: 'ABS' },
+                    { size: 'Standard', color: 'Blue', material: 'ABS' },
+                    { size: 'Standard', color: 'Red', material: 'ABS' }
+                ],
+                featured: true
+            },
+            {
+                id: 'PROD-102',
+                name: 'High-Visibility Reflex Safety Vest',
+                category: 'Safety Products',
+                subcategory: 'High-Vis Apparels',
+                moq: 50,
+                shortDesc: '100% polyester mesh fabric with 2-inch silver retro-reflective tape. Velcro front closure.',
+                description: 'Essential for roadside workers, warehouse logistics, and night construction. Provides 360-degree reflectivity in low-light environments. Breathable lightweight knit fabric.',
+                material: 'Polyester Mesh',
+                image: 'https://placehold.co/600x450/1E3A8A/FFFFFF?text=Safety+Vest',
+                variants: [
+                    { size: 'M', color: 'Neon Yellow', material: 'Polyester' },
+                    { size: 'L', color: 'Neon Yellow', material: 'Polyester' },
+                    { size: 'XL', color: 'Neon Yellow', material: 'Polyester' },
+                    { size: 'L', color: 'Neon Orange', material: 'Polyester' }
+                ],
+                featured: true
+            },
+            {
+                id: 'PROD-103',
+                name: 'Commercial Heavy Cotton Polo T-Shirt',
+                category: 'Garments & Textiles',
+                subcategory: 'Corporate Uniforms',
+                moq: 50,
+                shortDesc: '220 GSM combed cotton pique fabric, pre-shrunk, ideal for corporate branding and industrial staff.',
+                description: 'Durable corporate uniform polo shirt with double-needle stitching on shoulders and armholes. Resistant to fading and shrinkage during industrial laundering.',
+                material: '100% Combed Cotton',
+                image: 'https://placehold.co/600x450/334155/FFFFFF?text=Cotton+Polo',
+                variants: [
+                    { size: 'M', color: 'Navy Blue', material: 'Cotton' },
+                    { size: 'L', color: 'Navy Blue', material: 'Cotton' },
+                    { size: 'XL', color: 'Navy Blue', material: 'Cotton' },
+                    { size: 'XXL', color: 'Navy Blue', material: 'Cotton' },
+                    { size: 'L', color: 'Steel Grey', material: 'Cotton' }
+                ],
+                featured: true
+            },
+            {
+                id: 'PROD-104',
+                name: 'Industrial Heavy Duty Boiler Suit',
+                category: 'Garments & Textiles',
+                subcategory: 'Protective Workwear',
+                moq: 20,
+                shortDesc: 'Poly-cotton blend (80/20) coverall with two-way heavy brass zipper and multiple tool pockets.',
+                description: 'Engineered for refinery workers, mechanics, and factory floors. Provides full body protection against grease, oil, and minor abrasions. Double stitched stress points.',
+                material: 'Polyester Cotton Twill',
+                image: 'https://placehold.co/600x450/475569/FFFFFF?text=Boiler+Suit',
+                variants: [
+                    { size: '38 (M)', color: 'Navy Blue', material: 'Poly-Cotton' },
+                    { size: '40 (L)', color: 'Navy Blue', material: 'Poly-Cotton' },
+                    { size: '42 (XL)', color: 'Navy Blue', material: 'Poly-Cotton' },
+                    { size: '44 (XXL)', color: 'Royal Blue', material: 'Poly-Cotton' }
+                ],
+                featured: true
+            },
+            {
+                id: 'PROD-105',
+                name: 'Heavy Corrugated Shipping Boxes (5-Ply)',
+                category: 'Packaging Materials',
+                subcategory: 'Cartons & Boxes',
+                moq: 100,
+                shortDesc: 'KRAFT paper linerboard, heavy burst strength rating, shipped flat in bundles of 25.',
+                description: 'Industrial-grade packaging cartons designed for heavy freight and ecommerce dispatch. High stackability rating and edge crush resistance.',
+                material: 'Virgin Kraft Paper',
+                image: 'https://placehold.co/600x450/1E293B/FFFFFF?text=Corrugated+Box',
+                variants: [
+                    { size: '12x10x8 inch', color: 'Brown Kraft', material: '5-Ply Paper' },
+                    { size: '16x12x10 inch', color: 'Brown Kraft', material: '5-Ply Paper' },
+                    { size: '20x14x12 inch', color: 'Brown Kraft', material: '5-Ply Paper' }
+                ],
+                featured: true
+            },
+            {
+                id: 'PROD-106',
+                name: 'Stretch Wrap Film Roll (Industrial Grade)',
+                category: 'Packaging Materials',
+                subcategory: 'Pallet Packaging',
+                moq: 30,
+                shortDesc: '23 Micron thickness, 500mm width, high puncture resistance and superior cling memory.',
+                description: 'Used for pallet unitizing and bundling goods during transit. Protects against dust, moisture, and shifting loads in transit.',
+                material: 'LLDPE Plastic',
+                image: 'https://placehold.co/600x450/0F2C59/FFFFFF?text=Stretch+Wrap',
+                variants: [
+                    { size: '500mm x 400m', color: 'Transparent', material: 'LLDPE' },
+                    { size: '500mm x 400m', color: 'Black Opaque', material: 'LLDPE' }
+                ],
+                featured: true
+            },
+            {
+                id: 'PROD-107',
+                name: 'Anti-Fatigue Industrial Rubber Floor Mat',
+                category: 'Industrial Supplies',
+                subcategory: 'Flooring & Safety',
+                moq: 10,
+                shortDesc: 'Heavy-duty nitrile rubber drainage mat with bevelled edges, oil and grease resistant.',
+                description: 'Reduces worker fatigue on standing assembly lines and machine operating stations. Non-slip drainage holes for wet industrial environments.',
+                material: 'Nitrile Rubber',
+                image: 'https://placehold.co/600x450/1E3A8A/FFFFFF?text=Rubber+Mat',
+                variants: [
+                    { size: '3x3 Feet (15mm)', color: 'Black', material: 'Rubber' },
+                    { size: '3x5 Feet (15mm)', color: 'Black', material: 'Rubber' }
+                ],
+                featured: true
+            },
+            {
+                id: 'PROD-108',
+                name: 'Professional Chrome Vanadium Spanner Set',
+                category: 'Hardware & Tools',
+                subcategory: 'Hand Tools',
+                moq: 15,
+                shortDesc: '12-piece metric spanner set (6mm to 32mm) in heavy roll-up canvas pouch.',
+                description: 'Drop forged from chrome vanadium steel, heat treated and mirror polished finish. Meets DIN standards for professional mechanical workshops.',
+                material: 'Chrome Vanadium Steel',
+                image: 'https://placehold.co/600x450/334155/FFFFFF?text=Spanner+Set',
+                variants: [
+                    { size: 'Standard 12 Pcs', color: 'Chrome Silver', material: 'Cr-V Steel' },
+                    { size: 'Heavy Duty 24 Pcs', color: 'Chrome Silver', material: 'Cr-V Steel' }
+                ],
+                featured: true
+            },
+            {
+                id: 'PROD-109',
+                name: 'Durable Commercial Workwear Trousers',
+                category: 'Garments & Textiles',
+                subcategory: 'Workwear',
+                moq: 40,
+                shortDesc: 'Triple stitched cargo utility trousers with knee pad inserts and reinforced belt loops.',
+                description: 'Heavy duty construction trousers engineered for field technicians, engineers, and warehouse operators. Bar-tacked at all stress points.',
+                material: 'Cotton Blend Canvas',
+                image: 'https://placehold.co/600x450/475569/FFFFFF?text=Work+Trousers',
+                variants: [
+                    { size: '32', color: 'Navy Blue', material: 'Cotton Blend' },
+                    { size: '34', color: 'Navy Blue', material: 'Cotton Blend' },
+                    { size: '36', color: 'Navy Blue', material: 'Cotton Blend' },
+                    { size: '34', color: 'Dark Grey', material: 'Cotton Blend' }
+                ],
+                featured: false
+            },
+            {
+                id: 'PROD-110',
+                name: 'Nitrile Foam Dipped Safety Work Gloves',
+                category: 'Safety Products',
+                subcategory: 'Hand Protection',
+                moq: 100,
+                shortDesc: '13 Gauge seamless nylon liner with microporous nitrile palm coating for precision grip.',
+                description: 'EN 388 rated protective gloves offering superior dexterity and oil grip. Breathable back reduces hand sweat during prolonged shifts.',
+                material: 'Nylon & Nitrile Foam',
+                image: 'https://placehold.co/600x450/0F2C59/FFFFFF?text=Safety+Gloves',
+                variants: [
+                    { size: 'M (8)', color: 'Grey / Black', material: 'Nitrile' },
+                    { size: 'L (9)', color: 'Grey / Black', material: 'Nitrile' },
+                    { size: 'XL (10)', color: 'Grey / Black', material: 'Nitrile' }
+                ],
+                featured: false
+            },
+            {
+                id: 'PROD-111',
+                name: 'Heavy Duty HDPE Storage Crate',
+                category: 'Industrial Supplies',
+                subcategory: 'Storage & Bins',
+                moq: 25,
+                shortDesc: 'Stackable high-density polyethylene crate with reinforced ribs and ergonomic handles.',
+                description: 'Designed for food processing, auto component storage, and pharmaceutical warehousing. Resistant to chemicals and extreme temperatures.',
+                material: 'Virgin HDPE Plastic',
+                image: 'https://placehold.co/600x450/1E3A8A/FFFFFF?text=Storage+Crate',
+                variants: [
+                    { size: '400x300x220 mm', color: 'Royal Blue', material: 'HDPE' },
+                    { size: '600x400x320 mm', color: 'Royal Blue', material: 'HDPE' },
+                    { size: '600x400x320 mm', color: 'Red', material: 'HDPE' }
+                ],
+                featured: false
+            },
+            {
+                id: 'PROD-112',
+                name: 'Industrial High Tensile Hex Fastener Kit',
+                category: 'Hardware & Tools',
+                subcategory: 'Fasteners & Bolts',
+                moq: 50,
+                shortDesc: 'Grade 8.8 zinc plated metric hex bolts, nuts, and spring washers in heavy steel case.',
+                description: 'Standardized mechanical fasteners for structural assembly, machinery installation, and heavy equipment mounting.',
+                material: 'Grade 8.8 High Tensile Steel',
+                image: 'https://placehold.co/600x450/334155/FFFFFF?text=Fastener+Kit',
+                variants: [
+                    { size: 'M8 Assorted', color: 'Zinc Silver', material: 'Steel' },
+                    { size: 'M10 Assorted', color: 'Zinc Silver', material: 'Steel' },
+                    { size: 'M12 Assorted', color: 'Zinc Silver', material: 'Steel' }
+                ],
+                featured: false
+            }
+        ];
+
+        const DEFAULT_RFQS = [
+            {
+                id: 'RFQ-8492',
+                company: 'Apex Manufacturing Corp',
+                contact: 'Rajesh Sharma',
+                mobile: '+91 98210 54321',
+                email: 'rajesh@apexmfg.in',
+                gst: '27AAAAA0000A1Z5',
+                address: 'MIDC Industrial Area, Plot 14, Thane, Maharashtra',
+                message: 'Require urgent bulk delivery for factory expansion project. Need best wholesale quotation.',
+                date: '2026-10-02 14:30',
+                status: 'Pending',
+                items: [
+                    { id: 'PROD-101', name: 'Industrial Heavy Duty Safety Helmet', quantity: 150, variant: 'Yellow / Standard' },
+                    { id: 'PROD-102', name: 'High-Visibility Reflex Safety Vest', quantity: 300, variant: 'Neon Yellow / L' }
+                ]
+            },
+            {
+                id: 'RFQ-8488',
+                company: 'Vanguard Logistics Solutions',
+                contact: 'Sunil Patil',
+                mobile: '+91 97654 32109',
+                email: 's.patil@vanguardlogistics.com',
+                gst: '24BBBBB1111B2Z3',
+                address: 'NH-8 Bypass, Warehousing Zone, Ahmedabad, Gujarat',
+                message: 'Looking for regular monthly supply of stretch wrap and corrugated boxes.',
+                date: '2026-10-01 11:15',
+                status: 'Quoted',
+                items: [
+                    { id: 'PROD-105', name: 'Heavy Corrugated Shipping Boxes (5-Ply)', quantity: 500, variant: '16x12x10 inch / Brown Kraft' },
+                    { id: 'PROD-106', name: 'Stretch Wrap Film Roll (Industrial Grade)', quantity: 100, variant: 'Transparent / 500mm x 400m' }
+                ]
+            },
+            {
+                id: 'RFQ-8475',
+                company: 'Reliance Industrial Contractors',
+                contact: 'Karan Verma',
+                mobile: '+91 98199 44332',
+                email: 'procurement@reliancecontractors.com',
+                gst: '27CCCCC2222C3Z1',
+                address: 'Hazira Manufacturing Complex, Surat, Gujarat',
+                message: 'Need corporate logo embroidered on boiler suits. Kindly submit technical & commercial quote.',
+                date: '2026-09-28 16:45',
+                status: 'Reviewed',
+                items: [
+                    { id: 'PROD-104', name: 'Industrial Heavy Duty Boiler Suit', quantity: 80, variant: '42 (XL) / Navy Blue' },
+                    { id: 'PROD-110', name: 'Nitrile Foam Dipped Safety Work Gloves', quantity: 400, variant: 'L (9) / Grey / Black' }
+                ]
+            }
+        ];
+
+        /* ==========================================================
+           CENTRAL STATE CONTROLLER
+           ========================================================== */
+
+        class B2BAppRouter {
+            constructor() {
+                this.currentView = 'home';
+                this.selectedProductId = null;
+                this.filterCategory = '';
+                this.searchQuery = '';
+                
+                // Initialize LocalStorage state if empty
+                if (!localStorage.getItem('ks_products')) {
+                    localStorage.setItem('ks_products', JSON.stringify(DEFAULT_PRODUCTS));
+                }
+                if (!localStorage.getItem('ks_categories')) {
+                    localStorage.setItem('ks_categories', JSON.stringify(DEFAULT_CATEGORIES));
+                }
+                if (!localStorage.getItem('ks_rfqs')) {
+                    localStorage.setItem('ks_rfqs', JSON.stringify(DEFAULT_RFQS));
+                }
+                if (!localStorage.getItem('ks_quotation_cart')) {
+                    localStorage.setItem('ks_quotation_cart', JSON.stringify([]));
+                }
+
+                this.updateQuotationCount();
+            }
+
+            getProducts() {
+                return JSON.parse(localStorage.getItem('ks_products'));
+            }
+
+            getCategories() {
+                return JSON.parse(localStorage.getItem('ks_categories'));
+            }
+
+            getRfqs() {
+                return JSON.parse(localStorage.getItem('ks_rfqs'));
+            }
+
+            getCart() {
+                return JSON.parse(localStorage.getItem('ks_quotation_cart'));
+            }
+
+            saveCart(cart) {
+                localStorage.setItem('ks_quotation_cart', JSON.stringify(cart));
+                this.updateQuotationCount();
+            }
+
+            updateQuotationCount() {
+                const cart = this.getCart();
+                const uniqueCount = cart.length;
+                
+                const badge = document.getElementById('header-quote-count');
+                if (badge) {
+                    badge.innerText = uniqueCount;
+                }
+            }
+
+            navigateTo(view, param = null) {
+                this.currentView = view;
+                if (param !== null) {
+                    if (view === 'productDetail') this.selectedProductId = param;
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                this.render();
+                this.updateActiveNav();
+            }
+
+            updateActiveNav() {
+                document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('text-navy', 'font-bold', 'border-b-2', 'border-navy'));
+                if (this.currentView === 'home') {
+                    const el = document.getElementById('nav-home');
+                    if (el) el.classList.add('text-navy', 'font-bold');
+                } else if (this.currentView === 'products') {
+                    const el = document.getElementById('nav-products');
+                    if (el) el.classList.add('text-navy', 'font-bold');
+                } else if (this.currentView === 'categories') {
+                    const el = document.getElementById('nav-categories');
+                    if (el) el.classList.add('text-navy', 'font-bold');
+                } else if (this.currentView === 'about') {
+                    const el = document.getElementById('nav-about');
+                    if (el) el.classList.add('text-navy', 'font-bold');
+                } else if (this.currentView === 'contact') {
+                    const el = document.getElementById('nav-contact');
+                    if (el) el.classList.add('text-navy', 'font-bold');
+                }
+            }
+
+            render() {
+                const container = document.getElementById('app-container');
+                if (!container) return;
+
+                switch(this.currentView) {
+                    case 'home':
+                        container.innerHTML = renderHomePage();
+                        break;
+                    case 'products':
+                        container.innerHTML = renderProductsPage();
+                        initProductFilters();
+                        break;
+                    case 'categories':
+                        container.innerHTML = renderCategoriesPage();
+                        break;
+                    case 'productDetail':
+                        container.innerHTML = renderProductDetailPage(this.selectedProductId);
+                        break;
+                    case 'quotationList':
+                        container.innerHTML = renderQuotationListPage();
+                        break;
+                    case 'requestQuote':
+                        container.innerHTML = renderRequestQuotePage();
+                        break;
+                    case 'rfqSuccess':
+                        container.innerHTML = renderRfqSuccessPage();
+                        break;
+                    case 'about':
+                        container.innerHTML = renderAboutPage();
+                        break;
+                    case 'contact':
+                        container.innerHTML = renderContactPage();
+                        break;
+                    case 'adminLogin':
+                        container.innerHTML = renderAdminLoginPage();
+                        break;
+                    case 'adminDashboard':
+                        container.innerHTML = renderAdminDashboard();
+                        break;
+                    case 'adminProducts':
+                        container.innerHTML = renderAdminProducts();
+                        break;
+                    case 'adminCategories':
+                        container.innerHTML = renderAdminCategories();
+                        break;
+                    case 'adminRfqs':
+                        container.innerHTML = renderAdminRfqs();
+                        break;
+                    default:
+                        container.innerHTML = renderHomePage();
+                }
+            }
+        }
+
+        const router = new B2BAppRouter();
+
+        /* ==========================================================
+           TOAST NOTIFICATION HELPER
+           ========================================================== */
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = `px-4 py-3 rounded shadow-lg text-sm font-medium text-white transition transform translate-y-2 opacity-0 flex items-center space-x-2 ${type === 'success' ? 'bg-navy border-l-4 border-orange-500' : 'bg-slate-800 border-l-4 border-red-500'}`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check text-orange-400' : 'fa-circle-exclamation text-red-400'}"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        /* ==========================================================
+           VIEW 1: HOME PAGE
+           ========================================================== */
+        function renderHomePage() {
+            const products = router.getProducts();
+            const categories = router.getCategories();
+            const featuredProducts = products.filter(p => p.featured).slice(0, 6);
+
+            return `
+                <section class="bg-navy text-white py-12 px-4 sm:px-6 lg:px-8 border-b border-navy-dark">
+                    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        <div class="lg:col-span-7 space-y-4">
+                            <span class="inline-block bg-navy-light text-orange-400 text-xs font-semibold px-3 py-1 rounded tracking-wide uppercase border border-blue-500/30">
+                                B2B Wholesale & Direct Manufacturer Supply
+                            </span>
+                            <h1 class="text-3xl sm:text-4xl font-bold tracking-tight leading-tight">
+                                Reliable Wholesale Products for Your Business
+                            </h1>
+                            <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                                Kailash Sagar Enterprise supplies industrial-grade safety products, corporate textiles, commercial packaging, and hardware supplies in bulk quantities at competitive wholesale rates.
+                            </p>
+                            <div class="flex flex-wrap gap-4 pt-2">
+                                <button onclick="router.navigateTo('products')" class="bg-b2bAccent hover:bg-b2bAccent-hover text-white font-medium px-6 py-3 rounded text-sm shadow transition flex items-center space-x-2">
+                                    <span>Explore Products Catalog</span>
+                                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                                </button>
+                                <button onclick="router.navigateTo('requestQuote')" class="bg-white hover:bg-slate-100 text-navy font-medium px-6 py-3 rounded text-sm shadow transition border border-slate-300 flex items-center space-x-2">
+                                    <i class="fa-solid fa-file-invoice text-orange-600"></i>
+                                    <span>Request Custom Quotation</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-5 bg-navy-dark p-6 rounded border border-slate-700 shadow-md">
+                            <h3 class="text-white font-semibold text-sm mb-4 border-b border-slate-700 pb-2 flex items-center justify-between">
+                                <span><i class="fa-solid fa-bolt text-orange-400 mr-2"></i> Quick Business Inquiry</span>
+                                <span class="text-xs text-slate-400">Response in &lt; 4 Hours</span>
+                            </h3>
+                            <div class="space-y-3 text-xs">
+                                <div>
+                                    <label class="block text-slate-400 mb-1">Company / Business Name *</label>
+                                    <input type="text" id="quick-company" placeholder="e.g. Apex Industries Ltd" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-white outline-none focus:border-orange-400">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-400 mb-1">Required Products & Approx Qty *</label>
+                                    <input type="text" id="quick-requirement" placeholder="e.g. 200 Safety Helmets, 500 T-Shirts" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-white outline-none focus:border-orange-400">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-400 mb-1">Mobile Number / WhatsApp *</label>
+                                    <input type="text" id="quick-mobile" placeholder="+91 98765 43210" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-white outline-none focus:border-orange-400">
+                                </div>
+                                <button onclick="handleQuickInquirySubmit()" class="w-full bg-b2bAccent hover:bg-b2bAccent-hover text-white font-medium py-2.5 rounded text-sm transition mt-2">
+                                    Submit Bulk Inquiry
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <div class="flex justify-between items-end mb-6">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Wholesale Portfolio</span>
+                            <h2 class="text-2xl font-bold text-navy tracking-tight">Browse Product Categories</h2>
+                        </div>
+                        <button onclick="router.navigateTo('categories')" class="text-sm font-medium text-navy hover:underline flex items-center space-x-1">
+                            <span>View All Categories (${categories.length})</span>
+                            <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                        ${categories.map(cat => `
+                            <div onclick="router.filterCategory='${cat.name}'; router.navigateTo('products');" class="bg-white border border-slate-200 rounded p-4 hover:border-navy hover:shadow-md transition cursor-pointer flex flex-col justify-between group">
+                                <div>
+                                    <div class="h-36 rounded bg-slate-100 mb-3 overflow-hidden border border-slate-200">
+                                        <img src="${cat.image}" alt="${cat.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/400x300/0F2C59/FFFFFF?text=Category'">
+                                    </div>
+                                    <h3 class="font-bold text-navy text-sm mb-1 group-hover:text-orange-600 transition">${cat.name}</h3>
+                                    <p class="text-xs text-slate-500 line-clamp-2 mb-3">${cat.desc}</p>
+                                </div>
+                                <div class="flex justify-between items-center text-xs pt-2 border-t border-slate-100">
+                                    <span class="text-slate-600 font-medium">${cat.count} Products</span>
+                                    <span class="text-navy font-semibold group-hover:translate-x-1 transition">&rarr;</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </section>
+
+                <section class="bg-white border-t border-b border-slate-200 py-12">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="flex justify-between items-end mb-6">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-orange-600">High Demand B2B Stock</span>
+                                <h2 class="text-2xl font-bold text-navy tracking-tight">Featured Wholesale Products</h2>
+                            </div>
+                            <button onclick="router.navigateTo('products')" class="text-sm font-medium text-navy hover:underline flex items-center space-x-1">
+                                <span>Browse Full Catalog</span>
+                                <i class="fa-solid fa-chevron-right text-xs"></i>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            ${featuredProducts.map(prod => `
+                                <div class="bg-white border border-slate-200 rounded p-4 flex flex-col justify-between hover:border-slate-400 transition shadow-xs">
+                                    <div>
+                                        <div class="relative h-48 rounded bg-slate-50 mb-3 overflow-hidden border border-slate-200 cursor-pointer" onclick="router.navigateTo('productDetail', '${prod.id}')">
+                                            <img src="${prod.image}" alt="${prod.name}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x450/0F2C59/FFFFFF?text=Product'">
+                                            <span class="absolute top-2 left-2 bg-navy text-white text-[10px] font-semibold px-2 py-0.5 rounded uppercase tracking-wider">
+                                                ${prod.category}
+                                            </span>
+                                        </div>
+                                        <div class="mb-2">
+                                            <span class="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded border border-orange-200">
+                                                MOQ: ${prod.moq} Units
+                                            </span>
+                                        </div>
+                                        <h3 onclick="router.navigateTo('productDetail', '${prod.id}')" class="font-bold text-navy text-sm hover:underline cursor-pointer mb-1 leading-snug">
+                                            ${prod.name}
+                                        </h3>
+                                        <p class="text-xs text-slate-600 line-clamp-2 mb-3">
+                                            ${prod.shortDesc}
+                                        </p>
+                                        <div class="text-[11px] text-slate-500 mb-4 bg-slate-50 p-2 rounded border border-slate-200 flex items-center justify-between">
+                                            <span><i class="fa-solid fa-layer-group mr-1 text-slate-400"></i> Variants: <strong>${prod.variants.length} Options</strong></span>
+                                            <span>Material: <strong>${prod.material}</strong></span>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100">
+                                        <button onclick="router.navigateTo('productDetail', '${prod.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-medium py-2 px-3 rounded transition text-center">
+                                            View Details
+                                        </button>
+                                        <button onclick="quickAddQuote('${prod.id}')" class="bg-navy hover:bg-navy-dark text-white text-xs font-medium py-2 px-3 rounded transition text-center flex items-center justify-center space-x-1">
+                                            <i class="fa-solid fa-plus text-orange-400"></i>
+                                            <span>Add to Quote</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </section>
+
+                <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <div class="text-center max-w-2xl mx-auto mb-10">
+                        <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Enterprise Reliability</span>
+                        <h2 class="text-2xl font-bold text-navy tracking-tight mt-1">Why Established Businesses Choose Kailash Sagar</h2>
+                        <p class="text-xs text-slate-600 mt-2">We maintain strict industrial compliance, consistent stock availability, and transparent quotation workflows for enterprise procurement.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="bg-white p-6 rounded border border-slate-200 shadow-xs">
+                            <div class="h-10 w-10 rounded bg-navy text-white flex items-center justify-center mb-4 text-base">
+                                <i class="fa-solid fa-boxes-stacked text-orange-400"></i>
+                            </div>
+                            <h3 class="font-bold text-navy text-sm mb-1">Bulk Supply Capacity</h3>
+                            <p class="text-xs text-slate-600">Large inventory reserves ready for immediate dispatch against verified corporate purchase orders.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded border border-slate-200 shadow-xs">
+                            <div class="h-10 w-10 rounded bg-navy text-white flex items-center justify-center mb-4 text-base">
+                                <i class="fa-solid fa-certificate text-orange-400"></i>
+                            </div>
+                            <h3 class="font-bold text-navy text-sm mb-1">Certified Quality</h3>
+                            <p class="text-xs text-slate-600">Products meeting IS, CE, and ISO compliance standards required for industrial safety and quality audits.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded border border-slate-200 shadow-xs">
+                            <div class="h-10 w-10 rounded bg-navy text-white flex items-center justify-center mb-4 text-base">
+                                <i class="fa-solid fa-file-invoice-dollar text-orange-400"></i>
+                            </div>
+                            <h3 class="font-bold text-navy text-sm mb-1">Quotation-Based Pricing</h3>
+                            <p class="text-xs text-slate-600">Tiered wholesale pricing, GST invoices, and customized estimates tailored for institutional bulk volumes.</p>
+                        </div>
+                        <div class="bg-white p-6 rounded border border-slate-200 shadow-xs">
+                            <div class="h-10 w-10 rounded bg-navy text-white flex items-center justify-center mb-4 text-base">
+                                <i class="fa-solid fa-truck-fast text-orange-400"></i>
+                            </div>
+                            <h3 class="font-bold text-navy text-sm mb-1">Pan-India Logistics</h3>
+                            <p class="text-xs text-slate-600">Reliable freight partnerships ensuring secure transport to factory gates, warehouses, and corporate hubs.</p>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        function handleQuickInquirySubmit() {
+            const company = document.getElementById('quick-company').value.trim();
+            const requirement = document.getElementById('quick-requirement').value.trim();
+            const mobile = document.getElementById('quick-mobile').value.trim();
+
+            if (!company || !requirement || !mobile) {
+                showToast('Please fill in all quick inquiry fields.', 'error');
+                return;
+            }
+
+            const rfqs = router.getRfqs();
+            const newRfq = {
+                id: 'RFQ-' + Math.floor(1000 + Math.random() * 9000),
+                company: company,
+                contact: 'Direct Enquiry Contact',
+                mobile: mobile,
+                email: 'enquiry@clientdomain.com',
+                gst: 'PENDING-GST',
+                address: 'Provided via Quick Inquiry',
+                message: requirement,
+                date: new Date().toISOString().slice(0, 16).replace('T', ' '),
+                status: 'Pending',
+                items: [
+                    { id: 'GENERIC', name: requirement, quantity: 100, variant: 'Bulk Custom Requirement' }
+                ]
+            };
+            rfqs.unshift(newRfq);
+            localStorage.setItem('ks_rfqs', JSON.stringify(rfqs));
+
+            showToast('Bulk inquiry submitted successfully! Our sales team will contact you shortly.');
+            document.getElementById('quick-company').value = '';
+            document.getElementById('quick-requirement').value = '';
+            document.getElementById('quick-mobile').value = '';
+        }
+
+        function quickAddQuote(productId) {
+            const products = router.getProducts();
+            const prod = products.find(p => p.id === productId);
+            if (!prod) return;
+
+            const cart = router.getCart();
+            const defaultVariant = `${prod.variants[0].color} / ${prod.variants[0].size}`;
+            
+            const existing = cart.find(item => item.productId === productId && item.variant === defaultVariant);
+            if (existing) {
+                existing.quantity += prod.moq;
+            } else {
+                cart.push({
+                    productId: prod.id,
+                    name: prod.name,
+                    category: prod.category,
+                    moq: prod.moq,
+                    quantity: prod.moq,
+                    variant: defaultVariant,
+                    image: prod.image
+                });
+            }
+
+            router.saveCart(cart);
+            showToast(`Added ${prod.name} (Qty: ${prod.moq}) to Quotation List.`);
+        }
+
+        /* ==========================================================
+           VIEW 2: PRODUCTS CATALOG PAGE
+           ========================================================== */
+        function renderProductsPage() {
+            const categories = router.getCategories();
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <!-- Breadcrumb -->
+                    <div class="text-xs text-slate-500 mb-6 flex items-center space-x-2">
+                        <button onclick="router.navigateTo('home')" class="hover:underline">Home</button>
+                        <span>/</span>
+                        <span class="text-navy font-semibold">Product Catalog</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                        <!-- Left Filter Sidebar -->
+                        <div class="lg:col-span-1 space-y-6 bg-white p-5 rounded border border-slate-200 h-fit">
+                            <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+                                <h3 class="font-bold text-navy text-sm uppercase tracking-wider">Catalog Filters</h3>
+                                <button onclick="resetFilters()" class="text-xs text-orange-600 hover:underline">Reset All</button>
+                            </div>
+
+                            <!-- Category Filter -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Category</label>
+                                <div class="space-y-1.5 text-xs">
+                                    <label class="flex items-center space-x-2 cursor-pointer">
+                                        <input type="radio" name="catFilter" value="" ${router.filterCategory === '' ? 'checked' : ''} onchange="filterCategoryChanged(this.value)" class="text-navy">
+                                        <span class="text-slate-700">All Categories</span>
+                                    </label>
+                                    ${categories.map(c => `
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="radio" name="catFilter" value="${c.name}" ${router.filterCategory === c.name ? 'checked' : ''} onchange="filterCategoryChanged(this.value)" class="text-navy">
+                                            <span class="text-slate-700">${c.name}</span>
+                                        </label>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <!-- Material Filter -->
+                            <div class="border-t border-slate-200 pt-4">
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Material Specification</label>
+                                <select id="filter-material" onchange="triggerCatalogFilter()" class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-xs outline-none focus:border-navy">
+                                    <option value="">All Materials</option>
+                                    <option value="ABS">ABS / HDPE Plastic</option>
+                                    <option value="Polyester">Polyester / Mesh</option>
+                                    <option value="Cotton">Combed Cotton</option>
+                                    <option value="Paper">Kraft Paper</option>
+                                    <option value="Rubber">Nitrile Rubber</option>
+                                    <option value="Steel">Chrome Vanadium Steel</option>
+                                </select>
+                            </div>
+
+                            <!-- MOQ Filter -->
+                            <div class="border-t border-slate-200 pt-4">
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Maximum MOQ</label>
+                                <select id="filter-moq" onchange="triggerCatalogFilter()" class="w-full bg-slate-50 border border-slate-300 rounded p-2 text-xs outline-none focus:border-navy">
+                                    <option value="">Any MOQ</option>
+                                    <option value="25">Up to 25 Units</option>
+                                    <option value="50">Up to 50 Units</option>
+                                    <option value="100">Up to 100 Units</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Right Product Catalog Grid & Search -->
+                        <div class="lg:col-span-3 space-y-4">
+                            <!-- Search & Sorting Toolbar -->
+                            <div class="bg-white p-4 rounded border border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3">
+                                <div class="w-full sm:w-72 flex items-center bg-slate-50 border border-slate-300 rounded px-3 py-2">
+                                    <i class="fa-solid fa-search text-slate-400 mr-2 text-xs"></i>
+                                    <input type="text" id="catalog-search" value="${router.searchQuery}" placeholder="Search products, keywords..." oninput="triggerCatalogFilter()" class="bg-transparent text-xs w-full outline-none text-slate-800">
+                                </div>
+                                <div class="flex items-center space-x-3 w-full sm:w-auto justify-between">
+                                    <span id="product-count-label" class="text-xs text-slate-500">Showing products</span>
+                                    <select id="catalog-sort" onchange="triggerCatalogFilter()" class="bg-slate-50 border border-slate-300 rounded px-3 py-2 text-xs outline-none focus:border-navy">
+                                        <option value="featured">Sort by: Featured</option>
+                                        <option value="moq-asc">MOQ: Low to High</option>
+                                        <option value="moq-desc">MOQ: High to Low</option>
+                                        <option value="name">Product Name (A-Z)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Products Grid -->
+                            <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <!-- Populated dynamically by JS filter -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function initProductFilters() {
+            triggerCatalogFilter();
+        }
+
+        function filterCategoryChanged(cat) {
+            router.filterCategory = cat;
+            triggerCatalogFilter();
+        }
+
+        function resetFilters() {
+            router.filterCategory = '';
+            router.searchQuery = '';
+            const searchInput = document.getElementById('catalog-search');
+            if (searchInput) searchInput.value = '';
+            const matSelect = document.getElementById('filter-material');
+            if (matSelect) matSelect.value = '';
+            const moqSelect = document.getElementById('filter-moq');
+            if (moqSelect) moqSelect.value = '';
+            triggerCatalogFilter();
+        }
+
+        function triggerCatalogFilter() {
+            const products = router.getProducts();
+            const searchInput = document.getElementById('catalog-search');
+            const searchQuery = searchInput ? searchInput.value.toLowerCase() : router.searchQuery.toLowerCase();
+            const matSelect = document.getElementById('filter-material');
+            const materialFilter = matSelect ? matSelect.value : '';
+            const moqSelect = document.getElementById('filter-moq');
+            const moqFilter = moqSelect ? moqSelect.value : '';
+            const sortSelect = document.getElementById('catalog-sort');
+            const sortBy = sortSelect ? sortSelect.value : 'featured';
+
+            let filtered = products.filter(p => {
+                const matchCat = router.filterCategory === '' || p.category === router.filterCategory;
+                const matchSearch = searchQuery === '' || p.name.toLowerCase().includes(searchQuery) || p.shortDesc.toLowerCase().includes(searchQuery) || p.category.toLowerCase().includes(searchQuery);
+                const matchMat = materialFilter === '' || p.material.toLowerCase().includes(materialFilter.toLowerCase());
+                const matchMoq = moqFilter === '' || p.moq <= parseInt(moqFilter);
+                return matchCat && matchSearch && matchMat && matchMoq;
+            });
+
+            if (sortBy === 'moq-asc') filtered.sort((a, b) => a.moq - b.moq);
+            if (sortBy === 'moq-desc') filtered.sort((a, b) => b.moq - a.moq);
+            if (sortBy === 'name') filtered.sort((a, b) => a.name.localeCompare(b.name));
+
+            const countLabel = document.getElementById('product-count-label');
+            if (countLabel) countLabel.innerText = `Showing ${filtered.length} wholesale products`;
+
+            const grid = document.getElementById('catalog-grid');
+            if (!grid) return;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full bg-white p-12 text-center rounded border border-slate-200">
+                        <i class="fa-solid fa-box-open text-4xl text-slate-300 mb-3"></i>
+                        <h4 class="font-bold text-navy text-base mb-1">No Products Found</h4>
+                        <p class="text-xs text-slate-500 mb-4">No wholesale products match your current filter criteria.</p>
+                        <button onclick="resetFilters()" class="bg-navy text-white text-xs font-medium px-4 py-2 rounded">Clear All Filters</button>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(prod => `
+                <div class="bg-white border border-slate-200 rounded p-4 flex flex-col justify-between hover:border-slate-400 transition shadow-xs">
+                    <div>
+                        <div class="relative h-48 rounded bg-slate-50 mb-3 overflow-hidden border border-slate-200 cursor-pointer" onclick="router.navigateTo('productDetail', '${prod.id}')">
+                            <img src="${prod.image}" alt="${prod.name}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x450/0F2C59/FFFFFF?text=Product'">
+                            <span class="absolute top-2 left-2 bg-navy text-white text-[10px] font-semibold px-2 py-0.5 rounded uppercase tracking-wider">
+                                ${prod.category}
+                            </span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded border border-orange-200">
+                                MOQ: ${prod.moq} Units
+                            </span>
+                        </div>
+                        <h3 onclick="router.navigateTo('productDetail', '${prod.id}')" class="font-bold text-navy text-sm hover:underline cursor-pointer mb-1 leading-snug">
+                            ${prod.name}
+                        </h3>
+                        <p class="text-xs text-slate-600 line-clamp-2 mb-3">
+                            ${prod.shortDesc}
+                        </p>
+                        <div class="text-[11px] text-slate-500 mb-4 bg-slate-50 p-2 rounded border border-slate-200 flex items-center justify-between">
+                            <span><i class="fa-solid fa-layer-group mr-1 text-slate-400"></i> Variants: <strong>${prod.variants.length} Options</strong></span>
+                            <span>Material: <strong>${prod.material}</strong></span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100">
+                        <button onclick="router.navigateTo('productDetail', '${prod.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-medium py-2 px-3 rounded transition text-center">
+                            View Details
+                        </button>
+                        <button onclick="quickAddQuote('${prod.id}')" class="bg-navy hover:bg-navy-dark text-white text-xs font-medium py-2 px-3 rounded transition text-center flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-plus text-orange-400"></i>
+                            <span>Add to Quote</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* ==========================================================
+           VIEW 3: CATEGORIES DIRECTORY PAGE
+           ========================================================== */
+        function renderCategoriesPage() {
+            const categories = router.getCategories();
+            const products = router.getProducts();
+
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <!-- Breadcrumb -->
+                    <div class="text-xs text-slate-500 mb-6 flex items-center space-x-2">
+                        <button onclick="router.navigateTo('home')" class="hover:underline">Home</button>
+                        <span>/</span>
+                        <span class="text-navy font-semibold">Categories Directory</span>
+                    </div>
+
+                    <div class="mb-8">
+                        <h1 class="text-2xl font-bold text-navy tracking-tight">Wholesale Product Categories</h1>
+                        <p class="text-xs text-slate-600 mt-1">Browse our structured B2B inventory organized by industrial sectors and commercial applications.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${categories.map(cat => {
+                            const catProducts = products.filter(p => p.category === cat.name);
+                            return `
+                                <div class="bg-white border border-slate-200 rounded p-6 shadow-xs hover:border-navy transition flex flex-col justify-between">
+                                    <div>
+                                        <div class="h-44 rounded bg-slate-100 mb-4 overflow-hidden border border-slate-200">
+                                            <img src="${cat.image}" alt="${cat.name}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x300/0F2C59/FFFFFF?text=Category'">
+                                        </div>
+                                        <div class="flex justify-between items-start mb-2">
+                                            <h3 class="font-bold text-navy text-base">${cat.name}</h3>
+                                            <span class="bg-orange-50 text-orange-600 font-bold text-xs px-2.5 py-0.5 rounded border border-orange-200">
+                                                ${catProducts.length} Items
+                                            </span>
+                                        </div>
+                                        <p class="text-xs text-slate-600 mb-4 leading-relaxed">${cat.desc}</p>
+                                        <div class="space-y-1 mb-6 text-xs text-slate-500 bg-slate-50 p-3 rounded border border-slate-200">
+                                            <div class="font-semibold text-slate-700 mb-1">Sample Products in Category:</div>
+                                            ${catProducts.slice(0, 3).map(p => `<div class="truncate">• ${p.name} (MOQ: ${p.moq})</div>`).join('')}
+                                            ${catProducts.length === 0 ? '<div class="italic text-slate-400">Products updating soon</div>' : ''}
+                                        </div>
+                                    </div>
+                                    <button onclick="router.filterCategory='${cat.name}'; router.navigateTo('products');" class="w-full bg-navy hover:bg-navy-dark text-white font-medium text-xs py-2.5 rounded transition flex items-center justify-center space-x-2">
+                                        <span>View Products in ${cat.name}</span>
+                                        <i class="fa-solid fa-arrow-right text-xs text-orange-400"></i>
+                                    </button>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        /* ==========================================================
+           VIEW 4: PRODUCT DETAILS PAGE
+           ========================================================== */
+        function renderProductDetailPage(productId) {
+            const products = router.getProducts();
+            const product = products.find(p => p.id === productId) || products[0];
+
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <!-- Breadcrumb -->
+                    <div class="text-xs text-slate-500 mb-6 flex items-center space-x-2">
+                        <button onclick="router.navigateTo('home')" class="hover:underline">Home</button>
+                        <span>/</span>
+                        <button onclick="router.navigateTo('products')" class="hover:underline">Catalog</button>
+                        <span>/</span>
+                        <span class="text-navy font-semibold">${product.name}</span>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded p-6 lg:p-10 shadow-xs grid grid-cols-1 lg:grid-cols-12 gap-10">
+                        <!-- Left Image Gallery -->
+                        <div class="lg:col-span-5 space-y-4">
+                            <div class="h-96 rounded bg-slate-50 border border-slate-200 overflow-hidden">
+                                <img id="main-product-img" src="${product.image}" alt="${product.name}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x450/0F2C59/FFFFFF?text=Product'">
+                            </div>
+                            <div class="grid grid-cols-4 gap-2">
+                                <div onclick="document.getElementById('main-product-img').src='${product.image}'" class="h-20 rounded border-2 border-navy overflow-hidden cursor-pointer">
+                                    <img src="${product.image}" class="w-full h-full object-cover">
+                                </div>
+                                <div onclick="document.getElementById('main-product-img').src='https://placehold.co/600x450/1E3A8A/FFFFFF?text=Angle+2'" class="h-20 rounded border border-slate-200 overflow-hidden cursor-pointer opacity-70 hover:opacity-100">
+                                    <img src="https://placehold.co/200x200/1E3A8A/FFFFFF?text=Angle+2" class="w-full h-full object-cover">
+                                </div>
+                                <div onclick="document.getElementById('main-product-img').src='https://placehold.co/600x450/334155/FFFFFF?text=Label'" class="h-20 rounded border border-slate-200 overflow-hidden cursor-pointer opacity-70 hover:opacity-100">
+                                    <img src="https://placehold.co/200x200/334155/FFFFFF?text=Label" class="w-full h-full object-cover">
+                                </div>
+                                <div onclick="document.getElementById('main-product-img').src='https://placehold.co/600x450/475569/FFFFFF?text=Box'" class="h-20 rounded border border-slate-200 overflow-hidden cursor-pointer opacity-70 hover:opacity-100">
+                                    <img src="https://placehold.co/200x200/475569/FFFFFF?text=Box" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded border border-slate-200 text-xs space-y-2 text-slate-600">
+                                <div class="font-bold text-navy"><i class="fa-solid fa-circle-check text-orange-600 mr-1.5"></i> B2B Wholesale Guarantee</div>
+                                <div>• Direct manufacturer pricing available for large volumes.</div>
+                                <div class="truncate">• SKU: <strong>${product.id}</strong> | Compliance: <strong>ISO/IS Certified</strong></div>
+                            </div>
+                        </div>
+
+                        <!-- Right Product Specifications & Quotation Controls -->
+                        <div class="lg:col-span-7 space-y-6">
+                            <div>
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <span class="bg-navy text-white text-xs font-semibold px-2.5 py-1 rounded uppercase tracking-wider">
+                                        ${product.category}
+                                    </span>
+                                    <span class="text-xs text-slate-500 font-mono">SKU: ${product.id}</span>
+                                </div>
+                                <h1 class="text-2xl lg:text-3xl font-bold text-navy tracking-tight">${product.name}</h1>
+                            </div>
+
+                            <div class="bg-orange-50 border border-orange-200 p-4 rounded flex items-center justify-between">
+                                <div>
+                                    <span class="text-xs font-bold text-orange-800 uppercase tracking-wide block">Minimum Order Quantity (MOQ)</span>
+                                    <span class="text-lg font-bold text-orange-900">${product.moq} Units</span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs text-slate-600 block">Pricing Model</span>
+                                    <span class="text-sm font-bold text-navy">Quotation-Based Bulk Pricing</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider mb-2">Description</h3>
+                                <p class="text-xs lg:text-sm text-slate-600 leading-relaxed">${product.description}</p>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4 pt-2 border-t border-slate-200">
+                                <div>
+                                    <span class="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-1">Material Specification</span>
+                                    <span class="text-sm font-medium text-navy bg-slate-100 px-3 py-1.5 rounded block border border-slate-200">${product.material}</span>
+                                </div>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-1">Subcategory</span>
+                                    <span class="text-sm font-medium text-navy bg-slate-100 px-3 py-1.5 rounded block border border-slate-200">${product.subcategory}</span>
+                                </div>
+                            </div>
+
+                            <!-- Variant Selection -->
+                            <div class="border-t border-slate-200 pt-4">
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Select Product Variant (Size & Color)</label>
+                                <select id="selected-variant-dropdown" class="w-full bg-slate-50 border border-slate-300 rounded p-3 text-xs lg:text-sm outline-none focus:border-navy font-medium">
+                                    ${product.variants.map((v, i) => `
+                                        <option value="${v.color} / ${v.size}">Color: ${v.color} | Size/Spec: ${v.size} (Material: ${v.material})</option>
+                                    `).join('')}
+                                </select>
+                            </div>
+
+                            <!-- Quantity Counter with MOQ Enforcement -->
+                            <div class="border-t border-slate-200 pt-4">
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Required Bulk Quantity (Min: ${product.moq})</label>
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex items-center border border-slate-300 rounded bg-slate-50">
+                                        <button onclick="adjustDetailQty(-${product.moq}, ${product.moq})" class="px-4 py-2.5 text-slate-700 hover:bg-slate-200 font-bold transition">-</button>
+                                        <input type="number" id="detail-qty-input" value="${product.moq}" min="${product.moq}" class="w-20 text-center bg-transparent font-bold text-sm outline-none">
+                                        <button onclick="adjustDetailQty(${product.moq}, ${product.moq})" class="px-4 py-2.5 text-slate-700 hover:bg-slate-200 font-bold transition">+</button>
+                                    </div>
+                                    <span class="text-xs text-slate-500">Units required for enterprise requirement</span>
+                                </div>
+                            </div>
+
+                            <!-- CTAs -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4 border-t border-slate-200">
+                                <button onclick="addProductToQuotation('${product.id}')" class="bg-navy hover:bg-navy-dark text-white font-medium py-3 px-6 rounded text-sm shadow transition flex items-center justify-center space-x-2">
+                                    <i class="fa-solid fa-file-circle-plus text-orange-400"></i>
+                                    <span>Add to Quotation List</span>
+                                </button>
+                                <button onclick="addProductAndGoQuote('${product.id}')" class="bg-b2bAccent hover:bg-b2bAccent-hover text-white font-medium py-3 px-6 rounded text-sm shadow transition flex items-center justify-center space-x-2">
+                                    <i class="fa-solid fa-paper-plane text-white"></i>
+                                    <span>Request Quotation Now</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function adjustDetailQty(amount, moq) {
+            const input = document.getElementById('detail-qty-input');
+            if (!input) return;
+            let current = parseInt(input.value) || moq;
+            current += amount;
+            if (current < moq) current = moq;
+            input.value = current;
+        }
+
+        function addProductToQuotation(productId) {
+            const products = router.getProducts();
+            const prod = products.find(p => p.id === productId);
+            const qtyInput = document.getElementById('detail-qty-input');
+            const variantSelect = document.getElementById('selected-variant-dropdown');
+
+            const qty = qtyInput ? parseInt(qtyInput.value) : prod.moq;
+            const variant = variantSelect ? variantSelect.value : 'Standard Variant';
+
+            if (qty < prod.moq) {
+                showToast(`Minimum Order Quantity (MOQ) for ${prod.name} is ${prod.moq} Units.`, 'error');
+                return;
+            }
+
+            const cart = router.getCart();
+            const existing = cart.find(item => item.productId === productId && item.variant === variant);
+            if (existing) {
+                existing.quantity += qty;
+            } else {
+                cart.push({
+                    productId: prod.id,
+                    name: prod.name,
+                    category: prod.category,
+                    moq: prod.moq,
+                    quantity: qty,
+                    variant: variant,
+                    image: prod.image
+                });
+            }
+
+            router.saveCart(cart);
+            showToast(`Added ${prod.name} (${qty} Units) to Quotation List.`);
+        }
+
+        function addProductAndGoQuote(productId) {
+            addProductToQuotation(productId);
+            router.navigateTo('quotationList');
+        }
+
+        /* ==========================================================
+           VIEW 5: QUOTATION LIST (BULK ENQUIRY CART) PAGE
+           ========================================================== */
+        function renderQuotationListPage() {
+            const cart = router.getCart();
+            const totalUnits = cart.reduce((sum, item) => sum + parseInt(item.quantity), 0);
+
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <!-- Breadcrumb -->
+                    <div class="text-xs text-slate-500 mb-6 flex items-center space-x-2">
+                        <button onclick="router.navigateTo('home')" class="hover:underline">Home</button>
+                        <span>/</span>
+                        <span class="text-navy font-semibold">Quotation List (Bulk Enquiry)</span>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h1 class="text-2xl font-bold text-navy tracking-tight">Quotation List (${cart.length} ${cart.length === 1 ? 'Product' : 'Products'})</h1>
+                            <p class="text-xs text-slate-600 mt-1">Review your selected wholesale products and quantities before submitting your official RFQ.</p>
+                        </div>
+                        ${cart.length > 0 ? `
+                            <button onclick="clearQuotationCart()" class="text-xs text-red-600 hover:underline font-medium">
+                                <i class="fa-solid fa-trash mr-1"></i> Clear Quotation List
+                            </button>
+                        ` : ''}
+                    </div>
+
+                    ${cart.length === 0 ? `
+                        <div class="bg-white border border-slate-200 rounded p-12 text-center">
+                            <div class="h-16 w-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                                <i class="fa-solid fa-file-invoice-dollar"></i>
+                            </div>
+                            <h3 class="font-bold text-navy text-lg mb-1">Your Quotation List is Empty</h3>
+                            <p class="text-xs text-slate-500 mb-6 max-w-md mx-auto">You have not added any products for bulk quotation yet. Browse our professional catalog and select items.</p>
+                            <button onclick="router.navigateTo('products')" class="bg-navy hover:bg-navy-dark text-white font-medium text-xs px-6 py-3 rounded transition">
+                                Explore Product Catalog
+                            </button>
+                        </div>
+                    ` : `
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                            <!-- Items List -->
+                            <div class="lg:col-span-8 space-y-4">
+                                ${cart.map((item, index) => `
+                                    <div class="bg-white border border-slate-200 rounded p-4 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="h-20 w-20 rounded bg-slate-50 border border-slate-200 overflow-hidden flex-shrink-0">
+                                                <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/200x200/0F2C59/FFFFFF?text=Product'">
+                                            </div>
+                                            <div>
+                                                <span class="text-[10px] font-bold text-orange-600 uppercase tracking-wide">${item.category}</span>
+                                                <h3 class="font-bold text-navy text-sm mb-1">${item.name}</h3>
+                                                <div class="text-xs text-slate-600 bg-slate-50 px-2 py-1 rounded border border-slate-200 mb-2 inline-block">
+                                                    Variant: <strong>${item.variant}</strong>
+                                                </div>
+                                                <div class="text-[11px] text-slate-500">
+                                                    MOQ Requirement: <strong class="text-navy">${item.moq} Units</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex flex-col sm:items-end justify-between w-full sm:w-auto gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-100">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-xs font-semibold text-slate-600">Quantity:</span>
+                                                <div class="flex items-center border border-slate-300 rounded bg-slate-50">
+                                                    <button onclick="updateCartItemQty(${index}, -${item.moq}, ${item.moq})" class="px-2.5 py-1 text-slate-700 hover:bg-slate-200 font-bold text-xs">-</button>
+                                                    <input type="number" value="${item.quantity}" min="${item.moq}" onchange="setCartItemQty(${index}, this.value, ${item.moq})" class="w-16 text-center bg-transparent font-bold text-xs outline-none">
+                                                    <button onclick="updateCartItemQty(${index}, ${item.moq}, ${item.moq})" class="px-2.5 py-1 text-slate-700 hover:bg-slate-200 font-bold text-xs">+</button>
+                                                </div>
+                                            </div>
+                                            <button onclick="removeCartItem(${index})" class="text-xs text-red-600 hover:underline font-medium flex items-center space-x-1">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                                <span>Remove Item</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+
+                            <!-- Summary Sidebar -->
+                            <div class="lg:col-span-4 space-y-4">
+                                <div class="bg-white border border-slate-200 rounded p-6 shadow-xs sticky top-28">
+                                    <h3 class="font-bold text-navy text-sm uppercase tracking-wider mb-4 border-b border-slate-200 pb-3">Quotation Summary</h3>
+                                    
+                                    <div class="space-y-3 text-xs mb-6">
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-600">Total Unique Products:</span>
+                                            <span class="font-bold text-navy">${cart.length}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-600">Total Units Requested:</span>
+                                            <span class="font-bold text-navy">${totalUnits} Units</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-600">Pricing Basis:</span>
+                                            <span class="font-semibold text-orange-600">Wholesale / RFQ Estimate</span>
+                                        </div>
+                                        <div class="flex justify-between pt-2 border-t border-slate-200">
+                                            <span class="text-slate-600 font-semibold">Payment / Checkout:</span>
+                                            <span class="text-slate-500 italic">Not Required (RFQ Only)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-3">
+                                        <button onclick="router.navigateTo('requestQuote')" class="w-full bg-b2bAccent hover:bg-b2bAccent-hover text-white font-medium py-3 rounded text-sm shadow transition flex items-center justify-center space-x-2">
+                                            <i class="fa-solid fa-paper-plane text-white"></i>
+                                            <span>Proceed to Request Quotation</span>
+                                        </button>
+                                        <button onclick="router.navigateTo('products')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-medium py-2.5 rounded text-xs transition text-center">
+                                            Continue Browsing Catalog
+                                        </button>
+                                    </div>
+
+                                    <div class="mt-6 pt-4 border-t border-slate-200 text-[11px] text-slate-500">
+                                        <p><i class="fa-solid fa-circle-info text-navy mr-1"></i> Submitting this quotation request creates an official RFQ ticket. Our sales desk will email/call back with commercial pricing within 4 hours.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        function updateCartItemQty(index, delta, moq) {
+            const cart = router.getCart();
+            cart[index].quantity += delta;
+            if (cart[index].quantity < moq) {
+                cart[index].quantity = moq;
+            }
+            router.saveCart(cart);
+            router.render();
+        }
+
+        function setCartItemQty(index, val, moq) {
+            const cart = router.getCart();
+            let parsed = parseInt(val) || moq;
+            if (parsed < moq) parsed = moq;
+            cart[index].quantity = parsed;
+            router.saveCart(cart);
+            router.render();
+        }
+
+        function removeCartItem(index) {
+            const cart = router.getCart();
+            cart.splice(index, 1);
+            router.saveCart(cart);
+            router.render();
+            showToast(`Removed product from quotation list.`);
+        }
+
+        function clearQuotationCart() {
+            router.saveCart([]);
+            router.render();
+            showToast('Quotation list cleared.');
+        }
+
+        /* ==========================================================
+           VIEW 6: REQUEST QUOTATION (RFQ FORM) PAGE
+           ========================================================== */
+        function renderRequestQuotePage() {
+            const cart = router.getCart();
+            if (cart.length === 0) {
+                setTimeout(() => router.navigateTo('quotationList'), 50);
+                return `<div class="p-12 text-center text-xs">Redirecting to Quotation List...</div>`;
+            }
+
+            const totalUnits = cart.reduce((sum, item) => sum + parseInt(item.quantity), 0);
+
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <!-- Breadcrumb -->
+                    <div class="text-xs text-slate-500 mb-6 flex items-center space-x-2">
+                        <button onclick="router.navigateTo('home')" class="hover:underline">Home</button>
+                        <span>/</span>
+                        <button onclick="router.navigateTo('quotationList')" class="hover:underline">Quotation List</button>
+                        <span>/</span>
+                        <span class="text-navy font-semibold">Request Quotation (RFQ)</span>
+                    </div>
+
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-navy tracking-tight">Request an Official Wholesale Quotation</h1>
+                        <p class="text-xs text-slate-600 mt-1">Tell us about your bulk requirement and enterprise details. Our quotation desk will prepare a commercial proposal.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        <!-- RFQ Form -->
+                        <div class="lg:col-span-7 bg-white border border-slate-200 rounded p-6 lg:p-8 shadow-xs">
+                            <h3 class="font-bold text-navy text-sm uppercase tracking-wider mb-4 border-b border-slate-200 pb-3">Business & Contact Details</h3>
+                            
+                            <form onsubmit="handleRfqSubmit(event)" class="space-y-4 text-xs">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-slate-700 font-bold mb-1">Company / Business Name *</label>
+                                        <input type="text" id="rfq-company" required placeholder="e.g. Apex Manufacturing Corp" class="w-full bg-slate-50 border border-slate-300 rounded p-2.5 text-xs outline-none focus:border-navy">
+                                    </div>
+                                    <div>
+                                        <label class="block text-slate-700 font-bold mb-1">Contact Person *</label>
+                                        <input type="text" id="rfq-contact" required placeholder="e.g. Rajesh Sharma (Procurement Manager)" class="w-full bg-slate-50 border border-slate-300 rounded p-2.5 text-xs outline-none focus:border-navy">
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-slate-700 font-bold mb-1">Mobile Number (WhatsApp) *</label>
+                                        <input type="text" id="rfq-mobile" required placeholder="+91 98210 54321" class="w-full bg-slate-50 border border-slate-300 rounded p-2.5 text-xs outline-none focus:border-navy">
+                                    </div>
+                                    <div>
+                                        <label class="block text-slate-700 font-bold mb-1">Business Email *</label>
+                                        <input type="email" id="rfq-email" required placeholder="rajesh@apexmfg.in" class="w-full bg-slate-50 border border-slate-300 rounded p-2.5 text-xs outline-none focus:border-navy">
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-slate-700 font-bold mb-1">GST Number (Optional)</label>
+                                        <input type="text" id="rfq-gst" placeholder="27AAAAA0000A1Z5" class="w-full bg-slate-50 border border-slate-300 rounded p-2.5 text-xs outline-none focus:border-navy">
+                                    </div>
+                                    <div>
+                                        <label class="block text-slate-700 font-bold mb-1">Delivery Destination / City *</label>
+                                        <input type="text" id="rfq-address" required placeholder="Factory Address / Warehouse Location" class="w-full bg-slate-50 border border-slate-300 rounded p-2.5 text-xs outline-none focus:border-navy">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-slate-700 font-bold mb-1">Additional Requirements / Project Specifications</label>
+                                    <textarea id="rfq-message" rows="3" placeholder="Specify expected delivery timelines, custom branding requirements, or specific freight forwarding instructions..." class="w-full bg-slate-50 border border-slate-300 rounded p-2.5 text-xs outline-none focus:border-navy"></textarea>
+                                </div>
+
+                                <div class="pt-4 border-t border-slate-200">
+                                    <button type="submit" class="w-full bg-b2bAccent hover:bg-b2bAccent-hover text-white font-bold py-3.5 rounded text-sm shadow transition flex items-center justify-center space-x-2">
+                                        <i class="fa-solid fa-paper-plane text-white"></i>
+                                        <span>Submit Quotation Request (RFQ)</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Selected Products Preview Sidebar -->
+                        <div class="lg:col-span-5 space-y-4">
+                            <div class="bg-white border border-slate-200 rounded p-6 shadow-xs">
+                                <h3 class="font-bold text-navy text-sm uppercase tracking-wider mb-3 border-b border-slate-200 pb-3 flex justify-between items-center">
+                                    <span>Your Selected Products</span>
+                                    <span class="text-xs bg-orange-50 text-orange-600 px-2 py-0.5 rounded border border-orange-200">${cart.length} Items</span>
+                                </h3>
+
+                                <div class="space-y-3 max-h-80 overflow-y-auto pr-1 mb-4">
+                                    ${cart.map(item => `
+                                        <div class="flex items-center space-x-3 p-2 bg-slate-50 rounded border border-slate-200 text-xs">
+                                            <img src="${item.image}" class="h-12 w-12 object-cover rounded border border-slate-200 flex-shrink-0" onerror="this.src='https://placehold.co/100x100/0F2C59/FFFFFF?text=Item'">
+                                            <div class="flex-grow min-w-0">
+                                                <div class="font-bold text-navy truncate">${item.name}</div>
+                                                <div class="text-[11px] text-slate-500 truncate">Variant: ${item.variant}</div>
+                                                <div class="text-[11px] text-orange-600 font-semibold">Qty: ${item.quantity} Units</div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+
+                                <div class="bg-navy text-white p-4 rounded text-xs space-y-2">
+                                    <div class="flex justify-between">
+                                        <span>Total Unique Products:</span>
+                                        <span class="font-bold">${cart.length}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Total Bulk Units:</span>
+                                        <span class="font-bold">${totalUnits} Units</span>
+                                    </div>
+                                    <div class="flex justify-between pt-2 border-t border-navy-dark">
+                                        <span>Estimated Response:</span>
+                                        <span class="text-orange-400 font-bold">&lt; 4 Working Hours</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleRfqSubmit(event) {
+            event.preventDefault();
+            const company = document.getElementById('rfq-company').value.trim();
+            const contact = document.getElementById('rfq-contact').value.trim();
+            const mobile = document.getElementById('rfq-mobile').value.trim();
+            const email = document.getElementById('rfq-email').value.trim();
+            const gst = document.getElementById('rfq-gst').value.trim() || 'Unregistered / N.A.';
+            const address = document.getElementById('rfq-address').value.trim();
+            const message = document.getElementById('rfq-message').value.trim() || 'None';
+
+            const cart = router.getCart();
+            if (cart.length === 0) {
+                showToast('Your quotation list is empty.', 'error');
+                return;
+            }
+
+            const rfqId = 'RFQ-' + Math.floor(1000 + Math.random() * 9000);
+            const newRfq = {
+                id: rfqId,
+                company: company,
+                contact: contact,
+                mobile: mobile,
+                email: email,
+                gst: gst,
+                address: address,
+                message: message,
+                date: new Date().toISOString().slice(0, 16).replace('T', ' '),
+                status: 'Pending',
+                items: cart.map(i => ({ id: i.productId, name: i.name, quantity: i.quantity, variant: i.variant }))
+            };
+
+            const rfqs = router.getRfqs();
+            rfqs.unshift(newRfq);
+            localStorage.setItem('ks_rfqs', JSON.stringify(rfqs));
+
+            router.saveCart([]);
+            window.lastSubmittedRfqId = rfqId;
+            router.navigateTo('rfqSuccess');
+        }
+
+        /* ==========================================================
+           VIEW 7: RFQ SUCCESS PAGE
+           ========================================================== */
+        function renderRfqSuccessPage() {
+            const rfqId = window.lastSubmittedRfqId || 'RFQ-8492';
+            return `
+                <div class="max-w-3xl mx-auto px-4 py-16">
+                    <div class="bg-white border border-slate-200 rounded p-8 sm:p-12 text-center shadow-xs">
+                        <div class="h-20 w-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <span class="bg-orange-50 text-orange-700 text-xs font-bold px-3 py-1 rounded uppercase tracking-wider border border-orange-200">
+                            Official Quotation Request Generated
+                        </span>
+                        <h1 class="text-2xl sm:text-3xl font-bold text-navy tracking-tight mt-3 mb-2">Quotation Request Submitted Successfully</h1>
+                        <p class="text-xs sm:text-sm text-slate-600 max-w-lg mx-auto mb-6">
+                            Thank you for submitting your bulk wholesale requirement to Kailash Sagar Enterprise. Our commercial desk has received your RFQ and assigned the tracking reference below.
+                        </p>
+
+                        <div class="bg-slate-50 border border-slate-300 rounded p-4 max-w-sm mx-auto mb-8 text-center">
+                            <span class="text-xs text-slate-500 uppercase tracking-wider block mb-1">Generated RFQ Tracking Reference</span>
+                            <span class="text-xl font-bold text-navy font-mono">${rfqId}</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
+                            <button onclick="router.navigateTo('products')" class="bg-navy hover:bg-navy-dark text-white font-medium text-xs py-3 px-6 rounded transition">
+                                Browse More Products
+                            </button>
+                            <button onclick="router.navigateTo('home')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 font-medium text-xs py-3 px-6 rounded transition border border-slate-300">
+                                Return to Homepage
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        /* ==========================================================
+           VIEW 8: ABOUT COMPANY PAGE
+           ========================================================== */
+        function renderAboutPage() {
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                    <div class="text-xs text-slate-500 mb-6 flex items-center space-x-2">
+                        <button onclick="router.navigateTo('home')" class="hover:underline">Home</button>
+                        <span>/</span>
+                        <span class="text-navy font-semibold">About Kailash Sagar Enterprise</span>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded p-8 sm:p-12 shadow-xs space-y-8">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Established B2B Wholesale Partner</span>
+                            <h1 class="text-2xl sm:text-3xl font-bold text-navy tracking-tight mt-1">About Kailash Sagar Enterprise</h1>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                            <div class="lg:col-span-7 space-y-4 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                <p>
+                                    Founded with a clear vision to provide dependable, high-grade industrial and commercial products, <strong>Kailash Sagar Enterprise</strong> is a trusted wholesale distributor and B2B partner serving manufacturing plants, construction contractors, corporate institutions, and logistics hubs across India.
+                                </p>
+                                <p>
+                                    Our inventory spans certified industrial safety gear, heavy-duty protective workwear, commercial packaging supplies, and industrial hardware. We specialize in quotation-based bulk procurement, ensuring transparent pricing, strict adherence to quality benchmarks, and dependable delivery timelines.
+                                </p>
+                                <div class="grid grid-cols-2 gap-4 pt-4 border-t border-slate-200">
+                                    <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                                        <div class="text-xl font-bold text-navy mb-1">15+ Years</div>
+                                        <div class="text-xs text-slate-500">B2B Wholesale Experience</div>
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded border border-slate-200">
+                                        <div class="text-xl font-bold text-navy mb-1">500+</div>
+                                        <div class="text-xs text-slate-500">Corporate & Industrial Clients</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-5 bg-navy text-white p-6 sm:p-8 rounded border border-navy-dark">
+                                <h3 class="font-bold text-white text-base mb-4 border-b border-navy-light pb-2">Core Business Pillars</h3>
+                                <ul class="space-y-3 text-xs">
+                                    <li class="flex items-start space-x-2">
+                                        <i class="fa-solid fa-check text-orange-400 mt-0.5"></i>
+                                        <span>Strict ISO & IS compliance for all industrial safety lines.</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <i class="fa-solid fa-check text-orange-400 mt-0.5"></i>
+                                        <span>Transparent RFQ and quotation workflows for corporate buyers.</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <i class="fa-solid fa-check text-orange-400 mt-0.5"></i>
+                                        <span>Dedicated account management for recurring bulk orders.</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <i class="fa-solid fa-check text-orange-400 mt-0.5"></i>
+                                        <span>Secure freight partnerships covering pan-India industrial zones.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        /* ==========================================================
+           VIEW 9: CONTACT PAGE
+           ========================================================== */
+        function renderContactPage() {
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                    <div class="text-xs text-slate-500 mb-6 flex items-center space-x-2">
+                        <button onclick="router.navigateTo('home')" class="hover:underline">Home</button>
+                        <span>/</span>
+                        <span class="text-navy font-semibold">Contact & Business Enquiry</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        <div class="lg:col-span-5 bg-white border border-slate-200 rounded p-8 shadow-xs space-y-6">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-orange-600">Get in Touch</span>
+                                <h1 class="text-2xl font-bold text-navy tracking-tight mt-1">Corporate Office</h1>
+                            </div>
+                            <div class="space-y-4 text-xs text-slate-600">
+                                <div class="flex items-start space-x-3">
+                                    <i class="fa-solid fa-location-dot text-orange-600 mt-1 text-base"></i>
+                                    <div>
+                                        <strong class="text-navy block mb-0.5">Headquarters</strong>
+                                        Plot No. 42, Sagar Industrial Estate, Near Express Highway, Andheri East, Mumbai - 400093, India
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <i class="fa-solid fa-phone text-orange-600 mt-1 text-base"></i>
+                                    <div>
+                                        <strong class="text-navy block mb-0.5">Telephone / Fax</strong>
+                                        +91 (022) 2855-4920 / 4921
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <i class="fa-solid fa-envelope text-orange-600 mt-1 text-base"></i>
+                                    <div>
+                                        <strong class="text-navy block mb-0.5">Email Support</strong>
+                                        bulk@kailashsagarenterprise.com
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <i class="fa-solid fa-clock text-orange-600 mt-1 text-base"></i>
+                                    <div>
+                                        <strong class="text-navy block mb-0.5">Business Hours</strong>
+                                        Monday - Saturday: 9:30 AM - 6:30 PM IST
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-7 bg-white border border-slate-200 rounded p-8 shadow-xs">
+                            <h3 class="font-bold text-navy text-sm uppercase tracking-wider mb-4 border-b border-slate-200 pb-3">Send a Business Enquiry</h3>
+                            <form onsubmit="handleContactSubmit(event)" class="space-y-4 text-xs">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-slate-700 font-bold mb-1">Your Name *</label>
+                                        <input type="text" required placeholder="Full Name" class="w-full bg-slate-50 border border-slate-300 rounded p-2.5 text-xs outline-none focus:border-navy">
+                                    </div>
+                                    <div>
+                                        <label class="block text-slate-700 font-bold mb-1">Company Name *</label>
+                                        <input type="text" required placeholder="Enterprise / Firm Name" class="w-full bg-slate-50 border border-slate-300 rounded p-2.5 text-xs outline-none focus:border-navy">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-slate-700 font-bold mb-1">Mobile Number *</label>
+                                        <input type="text" required placeholder="+91 98765 43210" class="w-full bg-slate-50 border border-slate-300 rounded p-2.5 text-xs outline-none focus:border-navy">
+                                    </div>
+                                    <div>
+                                        <label class="block text-slate-700 font-bold mb-1">Email Address *</label>
+                                        <input type="email" required placeholder="name@company.com" class="w-full bg-slate-50 border border-slate-300 rounded p-2.5 text-xs outline-none focus:border-navy">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-slate-700 font-bold mb-1">Enquiry Message *</label>
+                                    <textarea rows="4" required placeholder="Describe your wholesale requirement..." class="w-full bg-slate-50 border border-slate-300 rounded p-2.5 text-xs outline-none focus:border-navy"></textarea>
+                                </div>
+                                <button type="submit" class="bg-navy hover:bg-navy-dark text-white font-medium py-3 px-6 rounded text-xs transition">
+                                    Send Enquiry
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            showToast('Business enquiry submitted successfully! Our desk will reply within 4 hours.');
+            event.target.reset();
+        }
+
+        /* ==========================================================
+           ADMIN PORTAL VIEWS (10 to 13)
+           ========================================================== */
+
+        function renderAdminLoginPage() {
+            return `
+                <div class="max-w-md mx-auto px-4 py-20">
+                    <div class="bg-white border border-slate-200 rounded p-8 shadow-sm">
+                        <div class="text-center mb-6">
+                            <div class="h-12 w-12 bg-navy text-white rounded flex items-center justify-center mx-auto mb-3 font-bold text-lg">
+                                KS
+                            </div>
+                            <h2 class="text-xl font-bold text-navy tracking-tight">Admin Portal Login</h2>
+                            <p class="text-xs text-slate-500 mt-1">Kailash Sagar Enterprise Management</p>
+                        </div>
+                        <form onsubmit="handleAdminLogin(event)" class="space-y-4 text-xs">
+                            <div>
+                                <label class="block text-slate-700 font-bold mb-1">Admin Username</label>
+                                <input type="text" id="admin-user" required value="admin" class="w-full bg-slate-50 border border-slate-300 rounded p-2.5 text-xs outline-none focus:border-navy">
+                            </div>
+                            <div>
+                                <label class="block text-slate-700 font-bold mb-1">Password</label>
+                                <input type="password" id="admin-pass" required value="admin123" class="w-full bg-slate-50 border border-slate-300 rounded p-2.5 text-xs outline-none focus:border-navy">
+                            </div>
+                            <button type="submit" class="w-full bg-navy hover:bg-navy-dark text-white font-bold py-3 rounded text-xs transition">
+                                Login to Admin Dashboard
+                            </button>
+                        </form>
+                        <div class="mt-4 text-center">
+                            <button onclick="router.navigateTo('home')" class="text-xs text-slate-500 hover:text-navy underline">
+                                &larr; Return to Public Website
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleAdminLogin(event) {
+            event.preventDefault();
+            const u = document.getElementById('admin-user').value;
+            const p = document.getElementById('admin-pass').value;
+            if (u === 'admin' && p === 'admin123') {
+                showToast('Admin login successful.');
+                router.navigateTo('adminDashboard');
+            } else {
+                showToast('Invalid credentials. Use admin / admin123', 'error');
+            }
+        }
+
+        function renderAdminHeader(activeTab) {
+            return `
+                <div class="bg-navy text-white border-b border-navy-dark px-6 py-4">
+                    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-white text-navy h-9 w-9 rounded flex items-center justify-center font-bold text-sm">
+                                KS
+                            </div>
+                            <div>
+                                <h2 class="font-bold text-sm tracking-tight">Kailash Sagar Enterprise • Admin Portal</h2>
+                                <span class="text-[11px] text-slate-300">Wholesale Catalog & RFQ Management</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 text-xs">
+                            <button onclick="router.navigateTo('adminDashboard')" class="px-3 py-1.5 rounded ${activeTab === 'dash' ? 'bg-orange-600 text-white font-bold' : 'bg-navy-dark text-slate-300 hover:text-white'}">Dashboard</button>
+                            <button onclick="router.navigateTo('adminProducts')" class="px-3 py-1.5 rounded ${activeTab === 'prod' ? 'bg-orange-600 text-white font-bold' : 'bg-navy-dark text-slate-300 hover:text-white'}">Products</button>
+                            <button onclick="router.navigateTo('adminCategories')" class="px-3 py-1.5 rounded ${activeTab === 'cat' ? 'bg-orange-600 text-white font-bold' : 'bg-navy-dark text-slate-300 hover:text-white'}">Categories</button>
+                            <button onclick="router.navigateTo('adminRfqs')" class="px-3 py-1.5 rounded ${activeTab === 'rfq' ? 'bg-orange-600 text-white font-bold' : 'bg-navy-dark text-slate-300 hover:text-white'}">RFQs</button>
+                            <button onclick="router.navigateTo('home')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded ml-2">Logout</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 10. Admin Dashboard
+        function renderAdminDashboard() {
+            const products = router.getProducts();
+            const categories = router.getCategories();
+            const rfqs = router.getRfqs();
+            const pendingRfqs = rfqs.filter(r => r.status === 'Pending');
+
+            return `
+                <div>
+                    ${renderAdminHeader('dash')}
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h1 class="text-xl font-bold text-navy tracking-tight">Administrative Overview</h1>
+                                <p class="text-xs text-slate-500 mt-0.5">Real-time indicators across wholesale catalog and customer quotation requests.</p>
+                            </div>
+                            <button onclick="resetAllDemoDataAdmin()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs px-3 py-1.5 rounded font-medium border border-slate-300 transition">
+                                <i class="fa-solid fa-rotate-left mr-1"></i> Reset Demo Data
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div class="bg-white p-6 rounded border border-slate-200 shadow-xs">
+                                <span class="text-xs text-slate-500 uppercase tracking-wider block mb-1">Total Products</span>
+                                <span class="text-3xl font-bold text-navy">${products.length}</span>
+                                <div class="mt-2 text-xs text-orange-600 font-medium cursor-pointer hover:underline" onclick="router.navigateTo('adminProducts')">Manage Products &rarr;</div>
+                            </div>
+                            <div class="bg-white p-6 rounded border border-slate-200 shadow-xs">
+                                <span class="text-xs text-slate-500 uppercase tracking-wider block mb-1">Categories</span>
+                                <span class="text-3xl font-bold text-navy">${categories.length}</span>
+                                <div class="mt-2 text-xs text-orange-600 font-medium cursor-pointer hover:underline" onclick="router.navigateTo('adminCategories')">Manage Categories &rarr;</div>
+                            </div>
+                            <div class="bg-white p-6 rounded border border-slate-200 shadow-xs">
+                                <span class="text-xs text-slate-500 uppercase tracking-wider block mb-1">Pending Quotations</span>
+                                <span class="text-3xl font-bold text-orange-600">${pendingRfqs.length}</span>
+                                <div class="mt-2 text-xs text-orange-600 font-medium cursor-pointer hover:underline" onclick="router.navigateTo('adminRfqs')">Review RFQs &rarr;</div>
+                            </div>
+                            <div class="bg-white p-6 rounded border border-slate-200 shadow-xs">
+                                <span class="text-xs text-slate-500 uppercase tracking-wider block mb-1">Total RFQs Received</span>
+                                <span class="text-3xl font-bold text-navy">${rfqs.length}</span>
+                                <div class="mt-2 text-xs text-orange-600 font-medium cursor-pointer hover:underline" onclick="router.navigateTo('adminRfqs')">View All RFQs &rarr;</div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Quotation Requests -->
+                        <div class="bg-white border border-slate-200 rounded p-6 shadow-xs">
+                            <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-3">
+                                <h3 class="font-bold text-navy text-sm uppercase tracking-wider">Recent Quotation Requests (RFQs)</h3>
+                                <button onclick="router.navigateTo('adminRfqs')" class="text-xs text-orange-600 hover:underline font-medium">View All &rarr;</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs">
+                                    <thead>
+                                        <tr class="bg-slate-50 text-slate-700 border-b border-slate-200">
+                                            <th class="p-3">RFQ ID</th>
+                                            <th class="p-3">Company / Contact</th>
+                                            <th class="p-3">Products</th>
+                                            <th class="p-3">Date</th>
+                                            <th class="p-3">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100">
+                                        ${rfqs.slice(0, 5).map(r => `
+                                            <tr class="hover:bg-slate-50">
+                                                <td class="p-3 font-mono font-bold text-navy">${r.id}</td>
+                                                <td class="p-3">
+                                                    <div class="font-bold text-slate-800">${r.company}</div>
+                                                    <div class="text-[11px] text-slate-500">${r.contact} | ${r.mobile}</div>
+                                                </td>
+                                                <td class="p-3">${r.items.length} items (${r.items.reduce((s,i)=>s+parseInt(i.quantity),0)} units)</td>
+                                                <td class="p-3 text-slate-500">${r.date}</td>
+                                                <td class="p-3">
+                                                    <span class="px-2.5 py-1 rounded text-[10px] font-bold ${r.status==='Pending'?'bg-orange-100 text-orange-800':r.status==='Quoted'?'bg-blue-100 text-blue-800':'bg-emerald-100 text-emerald-800'}">
+                                                        ${r.status}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function resetAllDemoDataAdmin() {
+            if (!confirm('Reset all demo data to default state? This will restore initial products and demo RFQs.')) return;
+            localStorage.removeItem('ks_products');
+            localStorage.removeItem('ks_categories');
+            localStorage.removeItem('ks_rfqs');
+            localStorage.removeItem('ks_quotation_cart');
+            location.reload();
+        }
+
+        // 11. Admin Products
+        function renderAdminProducts() {
+            const products = router.getProducts();
+            return `
+                <div>
+                    ${renderAdminHeader('prod')}
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h1 class="text-xl font-bold text-navy tracking-tight">Manage Catalog Products</h1>
+                                <p class="text-xs text-slate-500 mt-0.5">Add, edit, or remove wholesale inventory items and variants.</p>
+                            </div>
+                            <button onclick="openProductModal()" class="bg-navy hover:bg-navy-dark text-white text-xs font-medium px-4 py-2 rounded flex items-center space-x-1.5 shadow">
+                                <i class="fa-solid fa-plus text-orange-400"></i>
+                                <span>Add New Product</span>
+                            </button>
+                        </div>
+
+                        <div class="bg-white border border-slate-200 rounded shadow-xs overflow-hidden">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-700 border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-3">SKU</th>
+                                        <th class="p-3">Product Name</th>
+                                        <th class="p-3">Category</th>
+                                        <th class="p-3">MOQ</th>
+                                        <th class="p-3">Variants</th>
+                                        <th class="p-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    ${products.map(p => `
+                                        <tr class="hover:bg-slate-50">
+                                            <td class="p-3 font-mono font-bold text-slate-600">${p.id}</td>
+                                            <td class="p-3 font-bold text-navy">${p.name}</td>
+                                            <td class="p-3">${p.category}</td>
+                                            <td class="p-3 font-semibold text-orange-600">${p.moq} Units</td>
+                                            <td class="p-3">${p.variants.length} Options</td>
+                                            <td class="p-3 text-right space-x-2">
+                                                <button onclick="openProductModal('${p.id}')" class="text-navy hover:underline font-medium">Edit</button>
+                                                <button onclick="deleteProduct('${p.id}')" class="text-red-600 hover:underline font-medium">Delete</button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Add/Edit Modal -->
+                <div id="product-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+                    <div class="bg-white rounded border border-slate-200 p-6 max-w-lg w-full space-y-4 max-h-[90vh] overflow-y-auto">
+                        <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+                            <h3 id="modal-title" class="font-bold text-navy text-sm uppercase tracking-wider">Add / Edit Product</h3>
+                            <button onclick="closeProductModal()" class="text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                        <form id="product-form" onsubmit="saveProduct(event)" class="space-y-3 text-xs">
+                            <input type="hidden" id="form-prod-id">
+                            <div>
+                                <label class="block text-slate-700 font-bold mb-1">Product Name *</label>
+                                <input type="text" id="form-name" required class="w-full bg-slate-50 border border-slate-300 rounded p-2 outline-none focus:border-navy">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-slate-700 font-bold mb-1">Category *</label>
+                                    <select id="form-category" class="w-full bg-slate-50 border border-slate-300 rounded p-2 outline-none focus:border-navy">
+                                        <option value="Safety Products">Safety Products</option>
+                                        <option value="Garments & Textiles">Garments & Textiles</option>
+                                        <option value="Industrial Supplies">Industrial Supplies</option>
+                                        <option value="Packaging Materials">Packaging Materials</option>
+                                        <option value="Hardware & Tools">Hardware & Tools</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-slate-700 font-bold mb-1">MOQ (Units) *</label>
+                                    <input type="number" id="form-moq" required min="1" value="25" class="w-full bg-slate-50 border border-slate-300 rounded p-2 outline-none focus:border-navy">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-slate-700 font-bold mb-1">Material Specification *</label>
+                                <input type="text" id="form-material" required placeholder="e.g. ABS Plastic" class="w-full bg-slate-50 border border-slate-300 rounded p-2 outline-none focus:border-navy">
+                            </div>
+                            <div>
+                                <label class="block text-slate-700 font-bold mb-1">Short Description *</label>
+                                <textarea id="form-shortdesc" required rows="2" class="w-full bg-slate-50 border border-slate-300 rounded p-2 outline-none focus:border-navy"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-slate-700 font-bold mb-1">Full Description *</label>
+                                <textarea id="form-desc" required rows="3" class="w-full bg-slate-50 border border-slate-300 rounded p-2 outline-none focus:border-navy"></textarea>
+                            </div>
+                            <div class="pt-3 border-t border-slate-200 flex justify-end space-x-2">
+                                <button type="button" onclick="closeProductModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded">Cancel</button>
+                                <button type="submit" class="bg-navy text-white px-4 py-2 rounded font-medium">Save Product</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openProductModal(productId = null) {
+            const modal = document.getElementById('product-modal');
+            modal.classList.remove('hidden');
+            if (productId) {
+                const products = router.getProducts();
+                const p = products.find(x => x.id === productId);
+                document.getElementById('modal-title').innerText = 'Edit Product: ' + p.id;
+                document.getElementById('form-prod-id').value = p.id;
+                document.getElementById('form-name').value = p.name;
+                document.getElementById('form-category').value = p.category;
+                document.getElementById('form-moq').value = p.moq;
+                document.getElementById('form-material').value = p.material;
+                document.getElementById('form-shortdesc').value = p.shortDesc;
+                document.getElementById('form-desc').value = p.description;
+            } else {
+                document.getElementById('modal-title').innerText = 'Add New Wholesale Product';
+                document.getElementById('product-form').reset();
+                document.getElementById('form-prod-id').value = '';
+            }
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+        }
+
+        function saveProduct(event) {
+            event.preventDefault();
+            const id = document.getElementById('form-prod-id').value;
+            const products = router.getProducts();
+
+            const name = document.getElementById('form-name').value;
+            const category = document.getElementById('form-category').value;
+            const moq = parseInt(document.getElementById('form-moq').value);
+            const material = document.getElementById('form-material').value;
+            const shortDesc = document.getElementById('form-shortdesc').value;
+            const description = document.getElementById('form-desc').value;
+
+            if (id) {
+                const p = products.find(x => x.id === id);
+                if (p) {
+                    p.name = name;
+                    p.category = category;
+                    p.moq = moq;
+                    p.material = material;
+                    p.shortDesc = shortDesc;
+                    p.description = description;
+                }
+                showToast('Product updated successfully.');
+            } else {
+                const newId = 'PROD-' + Math.floor(100 + Math.random() * 900);
+                products.push({
+                    id: newId,
+                    name: name,
+                    category: category,
+                    subcategory: 'General',
+                    moq: moq,
+                    shortDesc: shortDesc,
+                    description: description,
+                    material: material,
+                    image: 'https://placehold.co/600x450/0F2C59/FFFFFF?text=' + encodeURIComponent(name),
+                    variants: [{ size: 'Standard', color: 'Default', material: material }],
+                    featured: false
+                });
+                showToast('New product added successfully.');
+            }
+
+            localStorage.setItem('ks_products', JSON.stringify(products));
+            closeProductModal();
+            router.render();
+        }
+
+        function deleteProduct(productId) {
+            if (!confirm('Are you sure you want to delete this product?')) return;
+            let products = router.getProducts();
+            products = products.filter(p => p.id !== productId);
+            localStorage.setItem('ks_products', JSON.stringify(products));
+            showToast('Product deleted.');
+            router.render();
+        }
+
+        // 12. Admin Categories
+        function renderAdminCategories() {
+            const categories = router.getCategories();
+            return `
+                <div>
+                    ${renderAdminHeader('cat')}
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h1 class="text-xl font-bold text-navy tracking-tight">Manage Categories</h1>
+                                <p class="text-xs text-slate-500 mt-0.5">Organize wholesale catalog sectors.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded shadow-xs overflow-hidden">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-700 border-b border-slate-200">
+                                    <tr>
+                                        <th class="p-3">Category Name</th>
+                                        <th class="p-3">Description</th>
+                                        <th class="p-3">Products Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    ${categories.map(c => `
+                                        <tr class="hover:bg-slate-50">
+                                            <td class="p-3 font-bold text-navy">${c.name}</td>
+                                            <td class="p-3 text-slate-600">${c.desc}</td>
+                                            <td class="p-3 font-semibold text-orange-600">${c.count} Items</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 13. Admin RFQs
+        function renderAdminRfqs() {
+            const rfqs = router.getRfqs();
+            return `
+                <div>
+                    ${renderAdminHeader('rfq')}
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+                        <div>
+                            <h1 class="text-xl font-bold text-navy tracking-tight">Incoming Quotation Requests (RFQs)</h1>
+                            <p class="text-xs text-slate-500 mt-0.5">Manage customer bulk quotation enquiries and update quotation statuses.</p>
+                        </div>
+
+                        <div class="space-y-4">
+                            ${rfqs.map(r => `
+                                <div class="bg-white border border-slate-200 rounded p-6 shadow-xs space-y-4">
+                                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-200 pb-3">
+                                        <div>
+                                            <span class="font-mono font-bold text-navy text-sm mr-2">${r.id}</span>
+                                            <span class="text-xs text-slate-500">Submitted on: ${r.date}</span>
+                                        </div>
+                                        <div class="flex items-center space-x-3">
+                                            <label class="text-xs font-semibold text-slate-700">Status:</label>
+                                            <select onchange="updateRfqStatus('${r.id}', this.value)" class="bg-slate-50 border border-slate-300 rounded p-1.5 text-xs font-bold outline-none focus:border-navy">
+                                                <option value="Pending" ${r.status==='Pending'?'selected':''}>Pending</option>
+                                                <option value="Reviewed" ${r.status==='Reviewed'?'selected':''}>Reviewed</option>
+                                                <option value="Quoted" ${r.status==='Quoted'?'selected':''}>Quoted</option>
+                                                <option value="Completed" ${r.status==='Completed'?'selected':''}>Completed</option>
+                                                <option value="Rejected" ${r.status==='Rejected'?'selected':''}>Rejected</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                                        <div>
+                                            <strong class="text-slate-700 block mb-1">Company & Contact:</strong>
+                                            <div class="font-bold text-navy">${r.company}</div>
+                                            <div>${r.contact}</div>
+                                            <div>${r.mobile} | ${r.email}</div>
+                                            <div>GST: ${r.gst}</div>
+                                        </div>
+                                        <div>
+                                            <strong class="text-slate-700 block mb-1">Delivery Address:</strong>
+                                            <div class="text-slate-600">${r.address}</div>
+                                            <div class="mt-2"><strong class="text-slate-700">Message:</strong> ${r.message}</div>
+                                        </div>
+                                        <div>
+                                            <strong class="text-slate-700 block mb-1">Requested Items (${r.items.length}):</strong>
+                                            <div class="space-y-1 max-h-32 overflow-y-auto">
+                                                ${r.items.map(i => `
+                                                    <div class="bg-slate-50 p-1.5 rounded border border-slate-200">
+                                                        <div class="font-bold text-navy">${i.name}</div>
+                                                        <div class="text-[11px] text-slate-500">Variant: ${i.variant} | Qty: <strong class="text-orange-600">${i.quantity} Units</strong></div>
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateRfqStatus(rfqId, newStatus) {
+            const rfqs = router.getRfqs();
+            const r = rfqs.find(x => x.id === rfqId);
+            if (r) {
+                r.status = newStatus;
+                localStorage.setItem('ks_rfqs', JSON.stringify(rfqs));
+                showToast(`RFQ ${rfqId} status updated to ${newStatus}.`);
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            if (menu) menu.classList.toggle('hidden');
+        }
+
+        // Initialize App on Window Load
+        window.onload = function() {
+            router.navigateTo('home');
+        };
+    </script>
+</body>
 </html>
